@@ -3,6 +3,7 @@ const express = require("express");
 const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const mongoose = require("mongoose");
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
@@ -35,5 +36,17 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.json({ error: err });
 });
+
+mongoose
+  .connect(
+    "mongodb://localhost:27017/tlc?readPreference=primary&appname=MongoDB%20Compass&ssl=false",
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
+  .then(() => {
+    console.log("database connected");
+  })
+  .catch(() => {
+    console.log("There was an error connecting to the database");
+  });
 
 module.exports = app;
