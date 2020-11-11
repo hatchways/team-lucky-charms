@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-//More fields can be added or changed as needed.
+//More fields can be added or changed as needed by other tickets.
 //from now on we will decide prior to starting the tickets what the names should be for the fields
 const userSchema = new Schema(
   {
@@ -11,7 +11,7 @@ const userSchema = new Schema(
     email: {
       type: String,
     },
-    phoneNumber: {
+    phone: {
       type: String,
     },
     password: {
