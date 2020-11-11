@@ -4,10 +4,12 @@ const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const validateRegisterInput = require('../validation/register');
 const validateLoginInput = require('../validation/login');
+const { TOKEN_SECRET_KEY } = require('../config');
+
 
 const maxAge = 6480; // one week in seconds
 const createToken = (id) => {
-  return jwt.sign({ id }, 'we need to create a better secret key', { expiresIn: maxAge })
+  return jwt.sign({ id }, TOKEN_SECRET_KEY, { expiresIn: maxAge })
 }
 
 module.exports.registerPost = (req, res) => {
