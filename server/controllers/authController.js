@@ -13,9 +13,9 @@ const createToken = (id) => {
 }
 
 module.exports.registerPost = (req, res) => {
-  const { email, name, password, password2 } = req.body;
+  const { email, name, password, confirmPassword } = req.body;
 
-  const { errors, isValid } = validateRegisterInput({ email, name, password, password2 });
+  const { errors, isValid } = validateRegisterInput({ email, name, password, confirmPassword });
 
   if (!isValid) {
     return res.status(400).json({ errors });
@@ -32,7 +32,7 @@ module.exports.registerPost = (req, res) => {
       const user = await User.create({ email, name, password: hashedPassword });
       const token = createToken(user._id);
       res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-      return res.status(201).json({ user, token });
+      return res.status(201).json({ user });
     } catch (error) {
       console.log(error);
       return res.status(400).json(error);
@@ -55,7 +55,7 @@ module.exports.loginPost = async (req, res) => {
     if (auth) {
       const token = createToken(user._id);
       res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-      return res.status(201).json({ user, token });
+      return res.status(201).json({ user });
     }
     return res.status(400).json({ errors: { password: 'Password incorrect' }})
   }
