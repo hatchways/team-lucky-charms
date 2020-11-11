@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
+const { MONGODB_CON_STR } = require("./config");
 
 const { json, urlencoded } = express;
 
@@ -38,10 +39,7 @@ app.use(function(err, req, res, next) {
 });
 
 mongoose
-  .connect(
-    "mongodb://localhost:27017/tlc?readPreference=primary&appname=MongoDB%20Compass&ssl=false",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(MONGODB_CON_STR, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("database connected");
   })
