@@ -1,7 +1,7 @@
 # EXPRESS-STARTER
 
 # Connecting to the database locally. 
-1. Download the MongoDB server here (https://www.mongodb.com/try/download/community)
+1. Download the MongoDB community server here (https://www.mongodb.com/try/download/community)
 2. install it by following the default instructions on install wizard
 3. Create folder named 'data' in root folder(C:\\ for windows) and then another folder named 'db' inside 'data'
 4. Add environment variables to the system (C:\Program Files\MongoDB\Server\4.4\bin for Windows)
