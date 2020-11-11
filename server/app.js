@@ -3,9 +3,11 @@ const express = require("express");
 const { join } = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const mongoose = require("mongoose");
 
 const indexRouter = require("./routes/index");
 const pingRouter = require("./routes/ping");
+const { MONGODB_CON_STR } = require("./config");
 
 const { json, urlencoded } = express;
 
@@ -35,5 +37,14 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.json({ error: err });
 });
+
+mongoose
+  .connect(MONGODB_CON_STR, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log("database connected");
+  })
+  .catch(() => {
+    console.log("There was an error connecting to the database");
+  });
 
 module.exports = app;
