@@ -28,23 +28,26 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     marginTop: theme.spacing(4),
-    backgroundColor: "#69E781",
     color: "white",
     height: "4em",
     width: "50%",
+    backgroundColor: theme.appTheme.background,
   },
   description: {
     margin: theme.spacing(0.5, 3, 4),
   },
   divider: {
-    backgroundColor: "#69E781",
     height: "0.25em",
     width: "8vh",
     margin: "3em",
+    backgroundColor: theme.appTheme.background,
+  },
+  warning: {
+    color: theme.appTheme.warning,
   },
 }));
 
-const Form = ({
+const SignupLoginForm = ({
   formTitle,
   formDesc,
   redirectText,
@@ -126,14 +129,14 @@ const Form = ({
               onChange={(e) => setName({ value: e.target.value, error: "" })}
             />
           )}
-          <div style={{ color: "red" }}>{name.error}</div>
+          <div className={classes.warning}>{name.error}</div>
           <TextInput
             id="email"
             label="Email Address"
             value={email.value}
             onChange={(e) => setEmail({ value: e.target.value, error: "" })}
           />
-          <div style={{ color: "red" }}>{email.error}</div>
+          <div className={classes.warning}>{email.error}</div>
           <TextInput
             id="filled-password-input"
             label="Password"
@@ -141,7 +144,7 @@ const Form = ({
             value={password.value}
             onChange={(e) => setPassword({ value: e.target.value, error: "" })}
           />
-          <div style={{ color: "red" }}>{password.error}</div>
+          <div className={classes.warning}>{password.error}</div>
           {formName === "signup" && (
             <TextInput
               id="confirm-password"
@@ -154,7 +157,7 @@ const Form = ({
             />
           )}
 
-          <div style={{ color: "red" }}>{confirmPassword.error}</div>
+          <div className={classes.warning}>{confirmPassword.error}</div>
 
           <Button
             type="submit"
@@ -170,4 +173,4 @@ const Form = ({
   );
 };
 
-export default Form;
+export default SignupLoginForm;
