@@ -19,6 +19,7 @@
     "mongoose": "^5.10.13",
     "morgan": "~1.9.1",
     "nodemon": "^1.19.1",
+    "prettier": "^2.1.2",
     "validator": "^13.1.17"
   },
   "devDependencies": {
