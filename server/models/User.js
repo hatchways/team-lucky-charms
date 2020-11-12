@@ -17,6 +17,7 @@ const userSchema = new Schema(
     password: {
       type: String,
     },
+    projects: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
   },
   { timestamps: true }
 );
