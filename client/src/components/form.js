@@ -96,13 +96,71 @@ const SignupLoginForm = ({
     return isValid;
   };
 
+  const handleErrors = (errors) => {
+    if (errors.name) {
+      setName(prev => ({ ...prev, error: errors.name }))
+    }
+    if (errors.email) {
+      setEmail(prev => ({ ...prev, error: errors.email }))
+    }
+    if (errors.password) {
+      setPassword(prev => ({ ...prev, error: errors.password }))
+    }
+    if (errors.confirmPassword) {
+      setConfirmPassword(prev => ({ ...prev, error: errors.confirmPassword }))
+    }
+  }
+
+  const loginUser = async () => {
+    try {
+      const res = await fetch('/login', {
+        method: 'POST',
+        body: JSON.stringify({ email: email.value, password: password.value }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      if (data.errors) {
+        handleErrors(data.errors);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const signUpUser = async () => {
+    try {
+      const res = await fetch('/register', {
+        method: 'POST',
+        body: JSON.stringify(
+          {
+            email: email.value,
+            name: name.value,
+            password: password.value,
+            confirmPassword: confirmPassword.value
+          }
+        ),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      if (data.errors) {
+        handleErrors(data.errors);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   // on Button Submit
   const handleSubmit = (e) => {
     e.preventDefault();
     const isValid = validateFields();
 
     if (isValid) {
-      console.log("Submitted"); // Will replace with API call
+      if (formName === 'signup') {
+        signUpUser();
+      } else if (formName === 'login') {
+        loginUser();
+      }
     }
   };
 
