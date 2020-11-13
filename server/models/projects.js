@@ -5,9 +5,7 @@ const projectsSchema = new mongoose.Schema({
   subtitle: { type: String, required: true, minLength: 5, maxlength: 60 },
   description: { type: String, minlength: 5, maxlength: 255 },
   location: { type: String },
-  industry: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Industry", index: true },
-  ], // array of industry ID's from industry model
+  industry: { type: String },
   images: { type: Array }, // array of image urls
   fundingGoal: { type: Number },
   isLive: { type: Boolean, default: false },
