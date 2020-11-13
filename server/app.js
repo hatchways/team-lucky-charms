@@ -42,7 +42,11 @@ app.use(function (err, req, res, next) {
 });
 
 mongoose
-  .connect(MONGODB_CON_STR, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGODB_CON_STR, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    autoIndex: false,
+  })
   .then(() => {
     console.log("database connected");
   })

@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 const industrySchema = new mongoose.Schema({
   name: {
     type: String,
-    enum: ["Technology, Arts, Science, Music"],
+    enum: ["technology", "arts", "science", "music"],
+    lowercase: true,
+    trim: true,
   },
 });
 

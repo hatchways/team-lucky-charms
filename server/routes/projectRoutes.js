@@ -30,13 +30,22 @@ router.get("/:userId/", async (req, res) => {
 router.post("/", async (req, res) => {
   const project = new Project({
     title: req.body.title,
-    subTitle: req.body.subtitle,
+    subtitle: req.body.subtitle,
     description: req.body.description,
     location: req.body.location,
-    industry: req.body.industry,
+    fundingGoal: req.body.fundingGoal,
+    industry: "5fae1b27988d647479365e00", // for local testing
+    owner: "5fada01e9a86117bb4a75f61", // for local testing
   });
-  const result = await project.save();
-  res.send(result);
+
+  try {
+    const result = await project.save();
+    res.send(result);
+  } catch (ex) {
+    for (field in ex.errors) {
+      res.send(ex.errors[field].message);
+    }
+  }
 });
 
 module.exports = router;
