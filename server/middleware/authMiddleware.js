@@ -5,12 +5,12 @@ const requireAuth = (req, res, next) => {
   const token = req.cookies.jwt;
 
   if (token) {
-    jwt.verify(token, TOKEN_SECRET_KEY, (err, decodedToken) => {
+    jwt.verify(token, TOKEN_SECRET_KEY, (err, userToken) => {
       if (err) {
         // token expired
       } else {
         // user is authenticated
-        req.id = decodedToken.id; // get current user id
+        req.id = userToken.id; // get current user id
         next();
       }
     });
