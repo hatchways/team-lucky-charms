@@ -22,11 +22,13 @@ async function getProjectsForUser(req, res) {
 
 async function createProjectForUser(req, res) {
   try {
+    // Get authorized user
     const user = await User.findById(req.id).select("-password");
     if (!user) {
       return res.status(404).send("User not found");
     }
-    console.log("Current user", user);
+
+    // Create new project for this user
     const project = new Project({
       title: req.body.title,
       subtitle: req.body.subtitle,
@@ -39,6 +41,11 @@ async function createProjectForUser(req, res) {
     try {
       const result = await project.save();
       res.status(201).send(result);
+
+      // Add new project id to User
+      const updatedUser = await user.updateOne({
+        $push: { projects: result._id },
+      });
     } catch (ex) {
       console.log(ex);
       res.status(500).send("Unable to create project");
