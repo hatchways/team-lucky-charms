@@ -10,6 +10,7 @@ const { MONGODB_CON_STR } = require("./config");
 
 // routes
 const authRoutes = require("./routes/authRoutes");
+const projectRoutes = require("./routes/projectRoutes");
 
 const { json, urlencoded } = express;
 
@@ -22,14 +23,15 @@ app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
 
 app.use(authRoutes);
+app.use("/api/projects/", projectRoutes);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -40,7 +42,11 @@ app.use(function(err, req, res, next) {
 });
 
 mongoose
-  .connect(MONGODB_CON_STR, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGODB_CON_STR, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    autoIndex: false,
+  })
   .then(() => {
     console.log("database connected");
   })
