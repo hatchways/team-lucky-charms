@@ -54,10 +54,31 @@ module.exports.loginPost = async (req, res) => {
     const auth = await bcrypt.compare(password, user.password);
     if (auth) {
       const token = createToken(user._id);
-      res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
       return res.status(201).json({ user });
     }
     return res.status(400).json({ errors: { password: 'Password incorrect' }})
   }
   return res.status(400).json({ errors: { email: 'Email not found' }})
 }
+
+module.exports.getUser = async (req, res) => {
+  if (req.cookies.jwt) {
+    const jwtToken = req.cookies.jwt;
+    const decodedToken = jwt.verify(jwtToken, TOKEN_SECRET_KEY);
+    const user = await User.findById(decodedToken.id);
+    if (user) {
+      return res.status(201).json({ user });
+    } else {
+      return res.status(400).json({ errors: { user: "User not found" } });
+    }
+  }
+  return res
+    .status(400)
+    .json({ errors: { Error: "No auth token present in the header" } });
+};
+
+module.exports.logoutUser = async (req, res) => {
+  res.clearCookie("jwt");
+  return res.status(200).json({ message: "logged out , maybe" });
+};
