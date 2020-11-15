@@ -17,6 +17,9 @@ const userSchema = new Schema(
     password: {
       type: String,
     },
+    projects: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Project", index: true },
+    ], //array of project id's for this user
   },
   { timestamps: true }
 );
