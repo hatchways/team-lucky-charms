@@ -4,7 +4,8 @@ import {
   LOADING_USER,
   SIGNUP_SUCCESS,
   LOGIN_SUCCESS,
-} from "./constants";
+  UNAUTH_USER,
+} from './constants';
 
 const initialState = {
   isAuthenticated: false,
@@ -22,7 +23,7 @@ const UserContextProvider = ({ children }) => {
         return {
           ...state,
           user: payload,
-          isAuthenticated: true,
+          isAuthenticated: false,
           loading: false,
         };
       case LOGIN_SUCCESS:
@@ -44,6 +45,11 @@ const UserContextProvider = ({ children }) => {
           ...state,
           user: payload,
           isAuthenticated: true,
+          loading: false,
+        };
+      case UNAUTH_USER:
+        return {
+          ...state,
           loading: false,
         };
       default:

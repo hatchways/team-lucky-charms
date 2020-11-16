@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   logo: {
     height: theme.spacing(4),
     width: theme.spacing(4),
-    animation: "",
+    animation: '',
     marginLeft: 10,
     marginRight: 10,
   },
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     textTransform: 'uppercase',
     fontWeight: 500,
     '&.active': {
-      borderBottom: '3px solid',
+      borderBottom: '2px solid',
       borderBottomColor: '#69E781',
     },
   },
