@@ -6,16 +6,20 @@ const ProtectedRoutes = ({ component: Component, ...rest }) => {
   const {
     state: { isAuthenticated },
   } = useContext(userState);
+    console.log(isAuthenticated);
   return (
     <Route
       {...rest}
-      render={(props) =>
-        isAuthenticated ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to={{ pathname: "/login" }} />
-        )
-      }
+      render={(props) => {
+        if  (!isAuthenticated) {
+          return (
+            <Redirect
+              to='/login'
+            />
+          );
+        }
+         return <Component {...props} />;
+      }}
     />
   );
 };

@@ -9,6 +9,7 @@ import {
 const initialState = {
   isAuthenticated: false,
   user: {},
+  loading: true,
 };
 
 const userState = createContext(initialState);
@@ -17,29 +18,33 @@ const { Provider } = userState;
 const UserContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(({ state }, { type, payload }) => {
     switch (type) {
-      case LOADING_USER:
-        return {
-          ...state,
-          user: payload,
-          isAuthenticated: true,
-        };
       case SIGNUP_SUCCESS:
         return {
           ...state,
           user: payload,
           isAuthenticated: true,
+          loading: false,
         };
       case LOGIN_SUCCESS:
         return {
           ...state,
           user: payload,
           isAuthenticated: true,
+          loading: false,
         };
       case LOGOUT_USER:
         return {
           ...state,
           isAuthenticated: false,
           user: null,
+          loading: false,
+        };
+      case LOADING_USER:
+        return {
+          ...state,
+          user: payload,
+          isAuthenticated: true,
+          loading: false,
         };
       default:
         throw new Error();

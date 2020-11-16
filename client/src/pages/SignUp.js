@@ -8,6 +8,8 @@ const SignUp = () => {
   const {
     state: { isAuthenticated },
   } = useContext(userState);
+    console.log(isAuthenticated);
+
   if (isAuthenticated) {
     history.push("/profile");
   }

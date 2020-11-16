@@ -63,22 +63,17 @@ module.exports.loginPost = async (req, res) => {
 }
 
 module.exports.getUser = async (req, res) => {
-  if (req.cookies.jwt) {
-    const jwtToken = req.cookies.jwt;
-    const decodedToken = jwt.verify(jwtToken, TOKEN_SECRET_KEY);
-    const user = await User.findById(decodedToken.id);
-    if (user) {
-      return res.status(201).json({ user });
-    } else {
-      return res.status(400).json({ errors: { user: "User not found" } });
-    }
+  //return user to client side associated with the id from the token
+  const user = await User.findById(req.id);
+  if (user) {
+    return res.status(201).json({ user });
+  } else {
+    return res.status(400).json({ errors: { user: 'User not found' } });
   }
-  return res
-    .status(400)
-    .json({ errors: { Error: "No auth token present in the header" } });
 };
 
 module.exports.logoutUser = async (req, res) => {
-  res.clearCookie("jwt");
-  return res.status(200).json({ message: "logged out , maybe" });
+  //clear the cookie that was sent back from client with the request
+  res.clearCookie('jwt');
+  return res.status(200).json({ message: 'logged out , maybe' });
 };

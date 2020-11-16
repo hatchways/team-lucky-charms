@@ -3,14 +3,15 @@ import SignupLoginForm from "../components/form";
 import { userState } from "../provider/UserContext";
 import { useHistory } from "react-router-dom";
 
-const SignUp = () => {
+const Login = () => {
   const history = useHistory();
   const {
     state: { isAuthenticated },
   } = useContext(userState);
+  console.log(isAuthenticated);
   if (isAuthenticated) {
-    history.push("/profile");
-  } 
+    history.push('/profile');
+  }
   return (
     <SignupLoginForm
       formName="login"
@@ -23,4 +24,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Login;
