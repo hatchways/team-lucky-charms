@@ -17,7 +17,7 @@ async function getProjectsForUser(req, res) {
   if (!projects) {
     return res.status(404);
   }
-  res.send(projects);
+  res.status(200).send(projects);
 }
 
 async function createProjectForUser(req, res) {
@@ -30,6 +30,7 @@ async function createProjectForUser(req, res) {
       location: req.body.location,
       fundingGoal: req.body.fundingGoal,
       industry: req.body.industry,
+      images: req.body.images,
       owner: req.id,
     });
     try {
