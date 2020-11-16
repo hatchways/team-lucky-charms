@@ -18,14 +18,15 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   title: {
-    flexGrow: 1,
     textDecoration: 'none',
     color: 'black',
+    width: 'auto',
+    display: 'flex',
+    justifyContent: 'center',
   },
   logo: {
     height: theme.spacing(4),
     width: theme.spacing(4),
-    animation: '',
     marginLeft: 10,
     marginRight: 10,
   },
@@ -33,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'none',
     fontSize: 12,
     color: 'black',
-    alignItems: 'center',
     margin: '0 1rem',
     textTransform: 'uppercase',
     fontWeight: 500,
@@ -41,10 +41,15 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: '2px solid',
       borderBottomColor: '#69E781',
     },
+    '&:hover': {
+      color: 'grey',
+      background: 'transparent',
+    },
   },
   toolbar: {
     display: 'flex',
     zIndex: 10,
+    justifyContent: 'space-between',
   },
 }));
 
@@ -123,17 +128,12 @@ const Navbar = () => {
     <div className={classes.root}>
       <AppBar position="static" color="secondary">
         <Toolbar className={classes.toolbar}>
-          <Grid component={NavLink} to="/">
+          <Grid component={NavLink} to="/" className={classes.title}>
             <img className={classes.logo} src={logo} alt="logo" />
+            <Typography variant="h6" >
+              Product Launch
+            </Typography>
           </Grid>
-          <Typography
-            component={NavLink}
-            to="/"
-            variant="h6"
-            className={classes.title}
-          >
-            Product Launch
-          </Typography>
 
           {isAuthenticated
             ? renderNavbarLoggedUser()

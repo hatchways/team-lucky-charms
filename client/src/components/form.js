@@ -186,18 +186,19 @@ const SignupLoginForm = ({
         </Typography>
         <Divider className={classes.divider} />
         <Typography component="h6" className={classes.description}>
-          {formDesc}{" "}
-          <Link style={{ color: "black" }} to={`/${formLink}`}>
+          {formDesc}{' '}
+          <Link style={{ color: 'black' }} to={`/${formLink}`}>
             {redirectText}
           </Link>
         </Typography>
         <form className={classes.form} noValidate>
-          {formName === "signup" && (
+          {formName === 'signup' && (
             <TextInput
               id="name"
               label="Name"
               value={name.value}
-              onChange={(e) => setName({ value: e.target.value, error: "" })}
+              autoFocus
+              onChange={(e) => setName({ value: e.target.value, error: '' })}
             />
           )}
           <div className={classes.warning}>{name.error}</div>
@@ -205,7 +206,7 @@ const SignupLoginForm = ({
             id="email"
             label="Email Address"
             value={email.value}
-            onChange={(e) => setEmail({ value: e.target.value, error: "" })}
+            onChange={(e) => setEmail({ value: e.target.value, error: '' })}
           />
           <div className={classes.warning}>{email.error}</div>
           <TextInput
@@ -213,17 +214,17 @@ const SignupLoginForm = ({
             label="Password"
             type="password"
             value={password.value}
-            onChange={(e) => setPassword({ value: e.target.value, error: "" })}
+            onChange={(e) => setPassword({ value: e.target.value, error: '' })}
           />
           <div className={classes.warning}>{password.error}</div>
-          {formName === "signup" && (
+          {formName === 'signup' && (
             <TextInput
               id="confirm-password"
               label="Confirm Password"
               type="password"
               value={confirmPassword.value}
               onChange={(e) =>
-                setConfirmPassword({ value: e.target.value, error: "" })
+                setConfirmPassword({ value: e.target.value, error: '' })
               }
             />
           )}

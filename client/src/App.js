@@ -1,5 +1,5 @@
 import React, { useEffect, useContext} from 'react';
-import { MuiThemeProvider } from "@material-ui/core";
+import { CssBaseline, MuiThemeProvider } from '@material-ui/core';
 import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
 
 import { theme } from "./themes/theme";
@@ -37,6 +37,7 @@ function App() {
 
   return (
     <MuiThemeProvider theme={theme}>
+      <CssBaseline />
       <BrowserRouter>
         <Navbar />
         {loading ? (
