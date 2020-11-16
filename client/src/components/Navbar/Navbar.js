@@ -77,6 +77,9 @@ const Navbar = () => {
 
   const renderNavbarLoggedUser = () => (
     <div>
+      <NavLink color="inherit" to="/explore" className={classes.link}>
+        Explore
+      </NavLink>
       <NavLink color="inherit" to="/launch" className={classes.link}>
         Launch
       </NavLink>
@@ -104,6 +107,9 @@ const Navbar = () => {
 
   const renderNavbarNotLoggedUser = () => (
     <div>
+      <NavLink color="inherit" to="/explore" className={classes.link}>
+        Explore
+      </NavLink>
       <NavLink color="inherit" to="/login" className={classes.link}>
         Login
       </NavLink>
@@ -128,9 +134,7 @@ const Navbar = () => {
           >
             Product Launch
           </Typography>
-          <NavLink color="inherit" to="/explore" className={classes.link}>
-            Explore
-          </NavLink>
+
           {isAuthenticated
             ? renderNavbarLoggedUser()
             : renderNavbarNotLoggedUser()}
