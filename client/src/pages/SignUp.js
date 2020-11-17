@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import SignupLoginForm from "../components/form";
+import { userState } from "../provider/UserContext";
+import { useHistory } from "react-router-dom";
 
 const SignUp = () => {
+  const history = useHistory();
+  const {
+    state: { isAuthenticated },
+  } = useContext(userState);
+  if (isAuthenticated) {
+    history.push("/profile");
+  }
   return (
     <SignupLoginForm
       formName="signup"

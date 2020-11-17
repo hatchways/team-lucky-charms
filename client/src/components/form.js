@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   Typography,
   Container,
@@ -7,9 +7,11 @@ import {
   Button,
   Divider,
 } from "@material-ui/core";
+import { Link, useHistory } from "react-router-dom";
 
-import { Link } from "react-router-dom";
 import TextInput from "./TextInput";
+import { userState } from "../provider/UserContext";
+import { LOGIN_SUCCESS, SIGNUP_SUCCESS } from "../provider/constants";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -64,6 +66,8 @@ const SignupLoginForm = ({
   });
 
   const classes = useStyles();
+  const history = useHistory();
+  const { dispatch } = useContext(userState);
 
   // Input field validation
   const validateFields = () => {
@@ -98,57 +102,66 @@ const SignupLoginForm = ({
 
   const handleErrors = (errors) => {
     if (errors.name) {
-      setName(prev => ({ ...prev, error: errors.name }))
+      setName((prev) => ({ ...prev, error: errors.name }));
     }
     if (errors.email) {
-      setEmail(prev => ({ ...prev, error: errors.email }))
+      setEmail((prev) => ({ ...prev, error: errors.email }));
     }
     if (errors.password) {
-      setPassword(prev => ({ ...prev, error: errors.password }))
+      setPassword((prev) => ({ ...prev, error: errors.password }));
     }
     if (errors.confirmPassword) {
-      setConfirmPassword(prev => ({ ...prev, error: errors.confirmPassword }))
+      setConfirmPassword((prev) => ({
+        ...prev,
+        error: errors.confirmPassword,
+      }));
     }
-  }
+  };
 
   const loginUser = async () => {
     try {
-      const res = await fetch('/login', {
-        method: 'POST',
+      const res = await fetch("/login", {
+        method: "POST",
         body: JSON.stringify({ email: email.value, password: password.value }),
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" },
       });
       const data = await res.json();
+      if (!data.errors) {
+        dispatch({ type: LOGIN_SUCCESS, payload: data.user });
+        history.push("/profile");
+      }
       if (data.errors) {
         handleErrors(data.errors);
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const signUpUser = async () => {
     try {
-      const res = await fetch('/register', {
-        method: 'POST',
-        body: JSON.stringify(
-          {
-            email: email.value,
-            name: name.value,
-            password: password.value,
-            confirmPassword: confirmPassword.value
-          }
-        ),
-        headers: { 'Content-Type': 'application/json' }
+      const res = await fetch("/register", {
+        method: "POST",
+        body: JSON.stringify({
+          email: email.value,
+          name: name.value,
+          password: password.value,
+          confirmPassword: confirmPassword.value,
+        }),
+        headers: { "Content-Type": "application/json" },
       });
       const data = await res.json();
+      if (!data.errors) {
+        dispatch({ type: SIGNUP_SUCCESS, payload: data.user });
+        history.push("/profile");
+      }
       if (data.errors) {
         handleErrors(data.errors);
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   // on Button Submit
   const handleSubmit = (e) => {
@@ -156,9 +169,9 @@ const SignupLoginForm = ({
     const isValid = validateFields();
 
     if (isValid) {
-      if (formName === 'signup') {
+      if (formName === "signup") {
         signUpUser();
-      } else if (formName === 'login') {
+      } else if (formName === "login") {
         loginUser();
       }
     }
@@ -173,18 +186,19 @@ const SignupLoginForm = ({
         </Typography>
         <Divider className={classes.divider} />
         <Typography component="h6" className={classes.description}>
-          {formDesc}{" "}
-          <Link style={{ color: "black" }} to={`/${formLink}`}>
+          {formDesc}{' '}
+          <Link style={{ color: 'black' }} to={`/${formLink}`}>
             {redirectText}
           </Link>
         </Typography>
         <form className={classes.form} noValidate>
-          {formName === "signup" && (
+          {formName === 'signup' && (
             <TextInput
               id="name"
               label="Name"
               value={name.value}
-              onChange={(e) => setName({ value: e.target.value, error: "" })}
+              autoFocus={formName === 'signup' ? true : false}
+              onChange={(e) => setName({ value: e.target.value, error: '' })}
             />
           )}
           <div className={classes.warning}>{name.error}</div>
@@ -192,7 +206,8 @@ const SignupLoginForm = ({
             id="email"
             label="Email Address"
             value={email.value}
-            onChange={(e) => setEmail({ value: e.target.value, error: "" })}
+            autoFocus={formName === 'login' ? true : false}
+            onChange={(e) => setEmail({ value: e.target.value, error: '' })}
           />
           <div className={classes.warning}>{email.error}</div>
           <TextInput
@@ -200,17 +215,17 @@ const SignupLoginForm = ({
             label="Password"
             type="password"
             value={password.value}
-            onChange={(e) => setPassword({ value: e.target.value, error: "" })}
+            onChange={(e) => setPassword({ value: e.target.value, error: '' })}
           />
           <div className={classes.warning}>{password.error}</div>
-          {formName === "signup" && (
+          {formName === 'signup' && (
             <TextInput
               id="confirm-password"
               label="Confirm Password"
               type="password"
               value={confirmPassword.value}
               onChange={(e) =>
-                setConfirmPassword({ value: e.target.value, error: "" })
+                setConfirmPassword({ value: e.target.value, error: '' })
               }
             />
           )}

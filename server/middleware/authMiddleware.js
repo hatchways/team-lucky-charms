@@ -15,7 +15,7 @@ const requireAuth = (req, res, next) => {
       }
     });
   } else {
-    // no token, user is unauthenticated
+    return res.status(400).json({ errors: 'User not found' });
   }
 };
 

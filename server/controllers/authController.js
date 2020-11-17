@@ -54,10 +54,26 @@ module.exports.loginPost = async (req, res) => {
     const auth = await bcrypt.compare(password, user.password);
     if (auth) {
       const token = createToken(user._id);
-      res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+      res.cookie("jwt", token, { httpOnly: true, maxAge: maxAge * 1000 });
       return res.status(201).json({ user });
     }
     return res.status(400).json({ errors: { password: 'Password incorrect' }})
   }
   return res.status(400).json({ errors: { email: 'Email not found' }})
 }
+
+module.exports.getUser = async (req, res) => {
+  //return user to client side associated with the id from the token
+  const user = await User.findById(req.id);
+  if (user) {
+    return res.status(201).json({ user });
+  } else {
+    return res.status(400).json({ errors: { user: 'User not found' } });
+  }
+};
+
+module.exports.logoutUser = async (req, res) => {
+  //clear the cookie that was sent back from client with the request
+  res.clearCookie('jwt');
+  return res.status(200).json({ message: 'logged out , maybe' });
+};

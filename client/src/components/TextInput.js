@@ -10,7 +10,6 @@ const TextInput = ({ id, label, ...otherProps }) => {
       fullWidth
       id={id}
       label={label}
-      autoFocus
       {...otherProps}
     />
   );
