@@ -197,7 +197,7 @@ const SignupLoginForm = ({
               id="name"
               label="Name"
               value={name.value}
-              autoFocus
+              autoFocus={formName === 'signup' ? true : false}
               onChange={(e) => setName({ value: e.target.value, error: '' })}
             />
           )}
@@ -206,6 +206,7 @@ const SignupLoginForm = ({
             id="email"
             label="Email Address"
             value={email.value}
+            autoFocus={formName === 'login' ? true : false}
             onChange={(e) => setEmail({ value: e.target.value, error: '' })}
           />
           <div className={classes.warning}>{email.error}</div>
