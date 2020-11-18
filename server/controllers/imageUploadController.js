@@ -3,6 +3,7 @@ const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
 const { AWS_BUCKET_NAME } = process.env;
 const setConfig = require('../services/aws-config');
+const { v4: uuidv4 } = require('uuid');
 
 // set aws config details and create an instance
 setConfig();
@@ -31,7 +32,9 @@ const upload = multer({
       cb(null, { fieldName: file.fieldname });
     },
     key: (req, file, cb) => {
-      cb(null, Date.now().toString());
+      let extArray = file.mimetype.split('/');
+      let fileExtension = extArray[extArray.length - 1];
+      cb(null, uuidv4() + '.' + fileExtension);
     },
   }),
 });
