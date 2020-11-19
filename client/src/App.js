@@ -1,6 +1,8 @@
 import React, { useEffect, useContext} from 'react';
 import { CssBaseline, MuiThemeProvider } from '@material-ui/core';
 import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 import { theme } from "./themes/theme";
 import "./App.css";
@@ -14,9 +16,11 @@ import ProtectedRoutes from "./routes/ProtectedRoutes";
 import { userState } from "./provider/UserContext";
 import { LOADING_USER,UNAUTH_USER } from "./provider/constants";
 import Loader from './components/Loader';
+import FundingPayment from './components/Funding/Payments';
 
 function App() {
   const { dispatch, state: {loading} } = useContext(userState);
+  const stripePromise = loadStripe(process.env.REACT_APP_PUBLISHABLE_KEY);
   
   useEffect(() => {
     const getAuthenticatedUser = async () => {
@@ -39,20 +43,27 @@ function App() {
     <MuiThemeProvider theme={theme}>
       <CssBaseline />
       <BrowserRouter>
-        <Navbar />
-        {loading ? (
-          <Loader />
-        ) : (
-          <Switch>
-            <Redirect exact from="/" to="/login" />
-            <Route path="/explore" exact component={Explore} />
-            <Route path="/login" exact component={Login} />
-            <Route path="/signup" exact component={SignUp} />
-            <ProtectedRoutes path="/launch" exact component={Launch} />
-            <ProtectedRoutes path="/profile" exact component={Profile} />
-            <Route path="*" component={() => 'Page not found'} />
-          </Switch>
-        )}
+        <Elements stripe={stripePromise}>
+          <Navbar />
+          {loading ? (
+            <Loader />
+          ) : (
+            <Switch>
+              <Redirect exact from="/" to="/login" />
+              <Route path="/explore" exact component={Explore} />
+              <Route path="/login" exact component={Login} />
+              <Route path="/signup" exact component={SignUp} />
+              <ProtectedRoutes path="/launch" exact component={Launch} />
+              <ProtectedRoutes path="/profile" exact component={Profile} />
+              <ProtectedRoutes
+                path="/payments"
+                exact
+                component={FundingPayment}
+              />
+              <Route path="*" component={() => 'Page not found'} />
+            </Switch>
+          )}
+        </Elements>
       </BrowserRouter>
     </MuiThemeProvider>
   );
