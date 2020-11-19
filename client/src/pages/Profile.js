@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Profile = () => {
-  const { state: { user: authUser }} = useContext(userState);
+  const { state: { user: authUser, isAuthenticated }} = useContext(userState);
   const { userId } = useParams();
   const classes = useStyles();
   const [currentUser, setCurrentUser] = useState({ _id: null });
@@ -100,7 +100,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
 
   const handleCurrentUser = (response) => {
-    if (authUser._id === response._id) {
+    if (isAuthenticated && authUser._id === response._id) {
       setOwnUsersProfile(true);
     } else {
       setOwnUsersProfile(false);
