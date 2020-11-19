@@ -39,14 +39,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function FundingPayment(props) {
+export default function FundingPayment() {
   const [isProcessing, setProcessingTo] = useState(false);
   const [checkoutError, setCheckoutError] = useState();
   const [price, setPrice] = useState();
   const [name, setName] = useState('');
   const classes = useStyles();
   const history = useHistory();
-
   const stripe = useStripe();
   const elements = useElements();
 
@@ -62,6 +61,7 @@ export default function FundingPayment(props) {
     if (!stripe || !elements) {
       return;
     }
+
     const billingDetails = {
       name: name,
       email: 'test@now.com',
@@ -136,7 +136,7 @@ export default function FundingPayment(props) {
             style={{ width: '100%', paddingTop: 20 }}
             onSubmit={handleFormSubmit}
           >
-            <Typography component="h1" variant="h3" color="primary">
+            <Typography component="h1" variant="h3">
               Add Funds
             </Typography>
             <Divider className={classes.divider} />

@@ -9,6 +9,7 @@ module.exports.fundProject = async (req, res) => {
       currency: 'cad',
     });
     res.status(200).send(paymentIntent.client_secret);
+    console.log(paymentIntent);
   } catch (err) {
     res.status(500).json({ statusCode: 500, message: err.message });
   }
