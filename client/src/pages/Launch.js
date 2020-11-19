@@ -13,11 +13,11 @@ import {
   MenuItem,
   Modal,
   OutlinedInput,
-  Snackbar,
   TextField,
   Typography,
 } from '@material-ui/core';
 import { useDropzone } from 'react-dropzone';
+import { useHistory } from 'react-router-dom';
 
 // COMPONENTS
 import Button from '../components/Button';
@@ -117,6 +117,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Launch = () => {
+  const history = useHistory();
   const classes = useStyles();
   const {
     state: { user },
@@ -156,6 +157,7 @@ const Launch = () => {
 
   const projectLaunchSuccess = () => {
     resetInputs();
+    history.push(`/users/${user._id}`);
   };
 
   const onSubmitProject = async (e) => {
