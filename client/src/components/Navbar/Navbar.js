@@ -9,7 +9,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { NavLink, useHistory } from 'react-router-dom';
 
 import logo from "../../assets/images/logos/logo.png";
-import user from "../../assets/images/user.png";
+import avatar from "../../assets/images/user.png";
 import { userState } from "../../provider/UserContext";
 import { LOGOUT_USER } from "../../provider/constants";
 
@@ -58,7 +58,7 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const history = useHistory();
   const {
-    state: { isAuthenticated },
+    state: { isAuthenticated, user },
     dispatch,
   } = useContext(userState);
 
@@ -93,7 +93,7 @@ const Navbar = () => {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <Avatar alt="User" src={user} />
+        <Avatar alt="User" src={avatar} />
       </Button>
       <Menu
         id="profile-menu"
@@ -102,7 +102,7 @@ const Navbar = () => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={NavLink} to="/profile" onClick={handleClose}>
+        <MenuItem component={NavLink} to={`/users/${user._id}`} onClick={handleClose}>
           Profile
         </MenuItem>
         <MenuItem onClick={logout}>Logout</MenuItem>
