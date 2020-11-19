@@ -1,15 +1,15 @@
-import React, { useContext } from "react";
-import SignupLoginForm from "../components/form";
-import { userState } from "../provider/UserContext";
-import { useHistory } from "react-router-dom";
+import React, { useContext } from 'react';
+import SignupLoginForm from '../components/form';
+import { userState } from '../provider/UserContext';
+import { useHistory } from 'react-router-dom';
 
 const Login = () => {
   const history = useHistory();
   const {
-    state: { isAuthenticated },
+    state: { isAuthenticated, user },
   } = useContext(userState);
   if (isAuthenticated) {
-    history.push('/profile');
+    history.push(`/users/${user._id}`);
   }
   return (
     <SignupLoginForm
