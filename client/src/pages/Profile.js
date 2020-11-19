@@ -1,5 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Avatar, Box, Grid, makeStyles, Typography } from '@material-ui/core';
+import { useParams } from 'react-router-dom';
 
 // COMPONENTS
 import Project from '../components/Project';
@@ -91,73 +92,121 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Profile = () => {
-  const { state } = useContext(userState);
+  const { state: { user: authUser }} = useContext(userState);
+  const { userId } = useParams();
   const classes = useStyles();
+  const [currentUser, setCurrentUser] = useState({ _id: null });
+  const [ownUsersProfile, setOwnUsersProfile] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleCurrentUser = (response) => {
+    if (authUser._id === response._id) {
+      setOwnUsersProfile(true);
+    } else {
+      setOwnUsersProfile(false);
+    }
+    setCurrentUser(response);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    const getUser = async () => {
+      setLoading(true);
+      fetch(`/api/users/${userId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+        .then((response) => response.json())
+        .then((response) => {
+          handleCurrentUser(response);
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log(error);
+        });
+    };
+    getUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   return (
     <div className={classes.container}>
-      <Box className={classes.sidebar}>
-        <Box className={classes.userMeta}>
-          <Avatar alt="User" src={investor} className={classes.avatar} />
-          <Typography element="h1" className={classes.userName}>
-            Barney Cobb
-          </Typography>
-          <Typography
-            element="h2"
-            variant="subtitle1"
-            className={classes.location}
-          >
-            Toronto, Canada
-          </Typography>
-          <Button outlined>Send Message</Button>
-          <Typography
-            element="p"
-            variant="subtitle1"
-            className={classes.description}
-          >
-            My interests focus on the role of technology in enhancing
-            organizational effectiveness.
-          </Typography>
-          <Typography element="h3" className={classes.subheader}>
-            Expertise:
-          </Typography>
-          <Box className={classes.textBubbles}>
-            <TextBubble outlined>Marketing</TextBubble>
-            <TextBubble outlined>Sales</TextBubble>
-            <TextBubble outlined>Technology</TextBubble>
+      {loading ? (
+        // TODO: Create nicer looking loading (placeholders, etc.)
+        <h1>Loading...</h1>
+      ) : (
+        <>
+          <Box className={classes.sidebar}>
+            <Box className={classes.userMeta}>
+              <Avatar alt="User" src={investor} className={classes.avatar} />
+              <Typography element="h1" className={classes.userName}>
+                {currentUser.name}
+              </Typography>
+              <Typography
+                element="h2"
+                variant="subtitle1"
+                className={classes.location}
+              >
+                Toronto, Canada
+              </Typography>
+              <Button outlined>
+                {ownUsersProfile ? 'Edit Profile' : 'Send Message'}
+              </Button>
+              <Typography
+                element="p"
+                variant="subtitle1"
+                className={classes.description}
+              >
+                My interests focus on the role of technology in enhancing
+                organizational effectiveness.
+              </Typography>
+              <Typography element="h3" className={classes.subheader}>
+                Expertise:
+              </Typography>
+              <Box className={classes.textBubbles}>
+                <TextBubble outlined>Marketing</TextBubble>
+                <TextBubble outlined>Sales</TextBubble>
+                <TextBubble outlined>Technology</TextBubble>
+              </Box>
+            </Box>
+            <Box className={classes.metaFooter}>
+              <Typography className={classes.subheader}>
+                Looking to invest in:
+              </Typography>
+              <Box className={classes.textBubbles}>
+                <TextBubble>Technology</TextBubble>
+              </Box>
+              <Box className={classes.socialIcons}>
+                <Avatar
+                  className={classes.socialIcon}
+                  src={linkedin}
+                  alt="social-media"
+                />
+                <Avatar
+                  className={classes.socialIcon}
+                  src={angellist}
+                  alt="social-media"
+                />
+              </Box>
+            </Box>
           </Box>
-        </Box>
-        <Box className={classes.metaFooter}>
-          <Typography className={classes.subheader}>
-            Looking to invest in:
-          </Typography>
-          <Box className={classes.textBubbles}>
-            <TextBubble>Technology</TextBubble>
+          <Box className={classes.main}>
+            <Typography
+              element="h1"
+              variant="h1"
+              className={classes.mainHeader}
+            >
+              Invested in:
+            </Typography>
+            <Grid container spacing={3} className={classes.projects}>
+              {projects.map((project) => (
+                // TODO: change the key to project ID when fetching real projects
+                <Project key={project.title} data={project} />
+              ))}
+            </Grid>
           </Box>
-          <Box className={classes.socialIcons}>
-            <Avatar
-              className={classes.socialIcon}
-              src={linkedin}
-              alt="social-media"
-            />
-            <Avatar
-              className={classes.socialIcon}
-              src={angellist}
-              alt="social-media"
-            />
-          </Box>
-        </Box>
-      </Box>
-      <Box className={classes.main}>
-        <Typography element="h1" variant="h1" className={classes.mainHeader}>
-          Invested in:
-        </Typography>
-        <Grid container spacing={3} className={classes.projects}>
-          {projects.map((project) => (
-            <Project data={project} />
-          ))}
-        </Grid>
-      </Box>
+        </>
+      )}
     </div>
   );
 };
