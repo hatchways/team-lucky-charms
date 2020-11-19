@@ -10,9 +10,7 @@ async function getAllProjects(req, res) {
 }
 
 async function getProjectsForUser(req, res) {
-  const projects = await User.find({ _id: req.params.userId })
-    .select({ username: 1 })
-    .populate("projects", "title");
+  const projects = await Project.find({ owner: req.params.userId });
 
   if (!projects) {
     return res.status(404);
