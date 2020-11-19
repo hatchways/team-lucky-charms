@@ -92,42 +92,55 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Profile = () => {
-  const { state: { user: authUser, isAuthenticated }} = useContext(userState);
+  const {
+    state: { user: authUser, isAuthenticated },
+  } = useContext(userState);
   const { userId } = useParams();
   const classes = useStyles();
   const [currentUser, setCurrentUser] = useState({ _id: null });
-  const [ownUsersProfile, setOwnUsersProfile] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState(null);
 
   const handleCurrentUser = (response) => {
-    if (isAuthenticated && authUser._id === response._id) {
-      setOwnUsersProfile(true);
+    setLoading(true);
+    if (isAuthenticated && userId === authUser._id) {
+      setIsOwnProfile(true);
+      setCurrentUser(authUser);
+      setLoading(false);
     } else {
-      setOwnUsersProfile(false);
+      setIsOwnProfile(false);
+      getUser();
     }
-    setCurrentUser(response);
-    setLoading(false);
+  };
+
+  const getUser = async () => {
+    await fetch(`/api/users/${userId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        setCurrentUser(response);
+      })
+      .catch((error) => {
+        setErrors(error);
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    const getUser = async () => {
-      setLoading(true);
-      fetch(`/api/users/${userId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          handleCurrentUser(response);
-        })
-        .catch((error) => {
-          setLoading(false);
-          console.log(error);
-        });
-    };
-    getUser();
+    handleCurrentUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
+
+  if (errors) {
+    return (
+      <div className={classes.container}>
+        <h1>Error retrieving user profile</h1>
+      </div>
+    );
+  }
 
   return (
     <div className={classes.container}>
@@ -149,8 +162,8 @@ const Profile = () => {
               >
                 Toronto, Canada
               </Typography>
-              <Button outlined>
-                {ownUsersProfile ? 'Edit Profile' : 'Send Message'}
+              <Button outlined={isOwnProfile}>
+                {isOwnProfile ? 'Edit Profile' : 'Send Message'}
               </Button>
               <Typography
                 element="p"
