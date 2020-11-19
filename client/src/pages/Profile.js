@@ -8,10 +8,9 @@ import Button from '../components/Button';
 import TextBubble from '../components/TextBubble';
 
 // ASSETS
-import investor from '../assets/images/investor.png';
+import avatar from '../assets/images/user.png';
 import linkedin from '../assets/images/linkedin-icon.png';
 import angellist from '../assets/images/angellist-icon.png';
-import projects from '../data/testing/projects';
 
 // CONTEXT
 import { userState } from '../provider/UserContext';
@@ -101,16 +100,15 @@ const Profile = () => {
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState(null);
+  const [projects, setProjects] = useState([]);
 
-  const handleCurrentUser = (response) => {
-    setLoading(true);
-    if (isAuthenticated && userId === authUser._id) {
-      setIsOwnProfile(true);
-      setCurrentUser(authUser);
-      setLoading(false);
-    } else {
-      setIsOwnProfile(false);
-      getUser();
+  const getProjects = async () => {
+    try {
+      const response = await fetch(`/api/projects/${userId}`);
+      const projects = await response.json();
+      setProjects(projects);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -127,6 +125,19 @@ const Profile = () => {
         setErrors(error);
       })
       .finally(() => setLoading(false));
+  };
+
+  const handleCurrentUser = () => {
+    setLoading(true);
+    getProjects();
+    if (isAuthenticated && userId === authUser._id) {
+      setIsOwnProfile(true);
+      setCurrentUser(authUser);
+      setLoading(false);
+    } else {
+      setIsOwnProfile(false);
+      getUser();
+    }
   };
 
   useEffect(() => {
@@ -151,7 +162,7 @@ const Profile = () => {
         <>
           <Box className={classes.sidebar}>
             <Box className={classes.userMeta}>
-              <Avatar alt="User" src={investor} className={classes.avatar} />
+              <Avatar alt="User" src={avatar} className={classes.avatar} />
               <Typography element="h1" className={classes.userName}>
                 {currentUser.name}
               </Typography>
@@ -209,13 +220,16 @@ const Profile = () => {
               variant="h1"
               className={classes.mainHeader}
             >
-              Invested in:
+              Created Projects:
             </Typography>
             <Grid container spacing={3} className={classes.projects}>
-              {projects.map((project) => (
-                // TODO: change the key to project ID when fetching real projects
-                <Project key={project.title} data={project} />
-              ))}
+              {projects.length > 0 ? (
+                projects.map((project) => (
+                  <Project key={project._id} data={project} />
+                ))
+              ) : (
+                <h1>No projects created yet</h1>
+              )}
             </Grid>
           </Box>
         </>
