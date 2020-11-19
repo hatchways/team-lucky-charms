@@ -128,7 +128,7 @@ const SignupLoginForm = ({
       const data = await res.json();
       if (!data.errors) {
         dispatch({ type: LOGIN_SUCCESS, payload: data.user });
-        history.push("/profile");
+        history.push(`/users/${data.user._id}`);
       }
       if (data.errors) {
         handleErrors(data.errors);
