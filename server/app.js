@@ -13,6 +13,7 @@ const authRoutes = require('./routes/authRoutes');
 const fundingRoutes = require('./routes/fundingRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const imageUploadRoutes = require('./routes/imageUploadRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const { json, urlencoded } = express;
 
@@ -28,6 +29,7 @@ app.use(authRoutes);
 app.use('/api/projects/', projectRoutes);
 app.use('/api/projects/', imageUploadRoutes);
 app.use(fundingRoutes);
+app.use('/api/users/', userRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

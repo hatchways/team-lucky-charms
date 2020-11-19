@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 //from now on we will decide prior to starting the tickets what the names should be for the fields
 const userSchema = new Schema(
   {
-    username: {
+    name: {
       type: String,
     },
     email: {
