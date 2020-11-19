@@ -13,10 +13,10 @@ const useStyles = makeStyles((theme) => ({
   }),
 }));
 
-const Button = ({ children, ...otherProps }) => {
+const Button = ({ children, onClick, ...otherProps }) => {
   const classes = useStyles({...otherProps});
 
-  return <MuiButton className={classes.button}>{children}</MuiButton>;
+  return <MuiButton onClick={onClick} className={classes.button}>{children}</MuiButton>;
 };
 
 export default Button;
