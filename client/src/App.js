@@ -48,8 +48,8 @@ function App() {
             <Route path="/explore" exact component={Explore} />
             <Route path="/login" exact component={Login} />
             <Route path="/signup" exact component={SignUp} />
+            <Route path="/users/:userId" component={Profile} />
             <ProtectedRoutes path="/launch" exact component={Launch} />
-            <ProtectedRoutes path="/profile" exact component={Profile} />
             <Route path="*" component={() => 'Page not found'} />
           </Switch>
         )}
