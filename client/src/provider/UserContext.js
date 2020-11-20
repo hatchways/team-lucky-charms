@@ -23,7 +23,7 @@ const UserContextProvider = ({ children }) => {
         return {
           ...state,
           user: payload,
-          isAuthenticated: false,
+          isAuthenticated: true,
           loading: false,
         };
       case LOGIN_SUCCESS:

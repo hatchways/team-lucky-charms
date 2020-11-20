@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Project = ({ data }) => {
+const Project = ({ data, gridSize }) => {
   const classes = useStyles();
   const {
     currentFunding,
@@ -52,7 +52,7 @@ const Project = ({ data }) => {
     title,
   } = data;
   return (
-    <Grid item xs={6}>
+    <Grid item xs={gridSize}>
       <Box className={classes.container}>
         <div
           style={{ backgroundImage: `url(${img})` }}

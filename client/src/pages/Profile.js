@@ -15,6 +15,7 @@ import projects from '../data/testing/projects';
 
 // CONTEXT
 import { userState } from '../provider/UserContext';
+console.log(projects);
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -214,7 +215,7 @@ const Profile = () => {
             <Grid container spacing={3} className={classes.projects}>
               {projects.map((project) => (
                 // TODO: change the key to project ID when fetching real projects
-                <Project key={project.title} data={project} />
+                <Project key={project.title} data={project} gridSize={6} />
               ))}
             </Grid>
           </Box>

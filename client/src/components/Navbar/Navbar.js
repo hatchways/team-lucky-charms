@@ -7,7 +7,6 @@ import { Grid, Avatar, Button } from '@material-ui/core';
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { NavLink, useHistory } from 'react-router-dom';
-
 import logo from "../../assets/images/logos/logo.png";
 import avatar from "../../assets/images/user.png";
 import { userState } from "../../provider/UserContext";
@@ -130,9 +129,7 @@ const Navbar = () => {
         <Toolbar className={classes.toolbar}>
           <Grid component={NavLink} to="/" className={classes.title}>
             <img className={classes.logo} src={logo} alt="logo" />
-            <Typography variant="h6" >
-              Product Launch
-            </Typography>
+            <Typography variant="h6">Product Launch</Typography>
           </Grid>
 
           {isAuthenticated

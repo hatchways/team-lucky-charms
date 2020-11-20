@@ -2,7 +2,7 @@ const Project = require("../models/projects");
 const User = require("../models/User");
 
 async function getAllProjects(req, res) {
-  const projects = await Project.find().sort({ name: 1 });
+  const projects = await Project.find().sort({ createdAt: -1 });
   if (!projects) {
     return res.status(404);
   }
