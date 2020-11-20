@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
+import React, { useContext } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import { Grid, Avatar, Button } from '@material-ui/core';
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import { NavLink, useHistory } from 'react-router-dom';
 
 import logo from "../../assets/images/logos/logo.png";
@@ -130,9 +130,7 @@ const Navbar = () => {
         <Toolbar className={classes.toolbar}>
           <Grid component={NavLink} to="/" className={classes.title}>
             <img className={classes.logo} src={logo} alt="logo" />
-            <Typography variant="h6" >
-              Product Launch
-            </Typography>
+            <Typography variant="h6">Product Launch</Typography>
           </Grid>
 
           {isAuthenticated
