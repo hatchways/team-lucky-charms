@@ -8,10 +8,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { NavLink, useHistory } from 'react-router-dom';
 
-import logo from "../../assets/images/logos/logo.png";
+import logo from '../../assets/images/logos/logo.png';
 import avatar from "../../assets/images/user.png";
-import { userState } from "../../provider/UserContext";
-import { LOGOUT_USER } from "../../provider/constants";
+import { userState } from '../../provider/UserContext';
+import { LOGOUT_USER } from '../../provider/constants';
+import { disconnectClient } from '../../socketio-client';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,7 +59,7 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const history = useHistory();
   const {
-    state: { isAuthenticated, user },
+      state: { isAuthenticated, user },
     dispatch,
   } = useContext(userState);
 
@@ -76,6 +77,7 @@ const Navbar = () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
+    disconnectClient();
     history.push('/login');
     handleClose();
   };
@@ -101,8 +103,8 @@ const Navbar = () => {
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
-      >
-        <MenuItem component={NavLink} to={`/users/${user._id}`} onClick={handleClose}>
+      > 
+       <MenuItem component={NavLink} to={`/users/${user._id}`} onClick={handleClose}>
           Profile
         </MenuItem>
         <MenuItem onClick={logout}>Logout</MenuItem>
