@@ -1,16 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Avatar, Box, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Box, Grid, makeStyles, Typography } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 
 // COMPONENTS
 import Project from '../components/Project';
-import Button from '../components/Button';
-import TextBubble from '../components/TextBubble';
-
-// ASSETS
-import avatar from '../assets/images/user.png';
-import linkedin from '../assets/images/linkedin-icon.png';
-import angellist from '../assets/images/angellist-icon.png';
+import Sidebar from '../components/Profile/Sidebar';
 
 // CONTEXT
 import { userState } from '../provider/UserContext';
@@ -43,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
   mainHeader: {
     fontSize: '40px',
     fontWeight: '600',
-    paddingLeft: '12px',
   },
   metaFooter: {
     alignItems: 'center',
@@ -98,7 +91,7 @@ const Profile = () => {
   const classes = useStyles();
   const [currentUser, setCurrentUser] = useState({ _id: null });
   const [isOwnProfile, setIsOwnProfile] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState(null);
   const [projects, setProjects] = useState([]);
 
@@ -124,16 +117,16 @@ const Profile = () => {
       .catch((error) => {
         setErrors(error);
       })
-      .finally(() => setLoading(false));
+      .finally(() => setIsLoading(false));
   };
 
   const handleCurrentUser = () => {
-    setLoading(true);
+    setIsLoading(true);
     getProjects();
     if (isAuthenticated && userId === authUser._id) {
       setIsOwnProfile(true);
       setCurrentUser(authUser);
-      setLoading(false);
+      setIsLoading(false);
     } else {
       setIsOwnProfile(false);
       getUser();
@@ -143,7 +136,7 @@ const Profile = () => {
   useEffect(() => {
     handleCurrentUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [userId, authUser]);
 
   if (errors) {
     return (
@@ -155,65 +148,12 @@ const Profile = () => {
 
   return (
     <div className={classes.container}>
-      {loading ? (
-        // TODO: Create nicer looking loading (placeholders, etc.)
-        <h1>Loading...</h1>
+      {isLoading ? (
+        // TODO: Create nicer looking isLoading (placeholders, etc.)
+        <h1>isLoading...</h1>
       ) : (
         <>
-          <Box className={classes.sidebar}>
-            <Box className={classes.userMeta}>
-              <Avatar alt="User" src={avatar} className={classes.avatar} />
-              <Typography element="h1" className={classes.userName}>
-                {currentUser.name}
-              </Typography>
-              <Typography
-                element="h2"
-                variant="subtitle1"
-                className={classes.location}
-              >
-                Toronto, Canada
-              </Typography>
-              <Button outlined={isOwnProfile}>
-                {isOwnProfile ? 'Edit Profile' : 'Send Message'}
-              </Button>
-              <Typography
-                element="p"
-                variant="subtitle1"
-                className={classes.description}
-              >
-                My interests focus on the role of technology in enhancing
-                organizational effectiveness.
-              </Typography>
-              <Typography element="h3" className={classes.subheader}>
-                Expertise:
-              </Typography>
-              <Box className={classes.textBubbles}>
-                <TextBubble outlined>Marketing</TextBubble>
-                <TextBubble outlined>Sales</TextBubble>
-                <TextBubble outlined>Technology</TextBubble>
-              </Box>
-            </Box>
-            <Box className={classes.metaFooter}>
-              <Typography className={classes.subheader}>
-                Looking to invest in:
-              </Typography>
-              <Box className={classes.textBubbles}>
-                <TextBubble>Technology</TextBubble>
-              </Box>
-              <Box className={classes.socialIcons}>
-                <Avatar
-                  className={classes.socialIcon}
-                  src={linkedin}
-                  alt="social-media"
-                />
-                <Avatar
-                  className={classes.socialIcon}
-                  src={angellist}
-                  alt="social-media"
-                />
-              </Box>
-            </Box>
-          </Box>
+          <Sidebar isOwnProfile={isOwnProfile} user={currentUser} />
           <Box className={classes.main}>
             <Typography
               element="h1"
