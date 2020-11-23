@@ -17,7 +17,7 @@ const userState = createContext(initialState);
 const { Provider } = userState;
 
 const UserContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(({ state }, { type, payload }) => {
+  const [state, dispatch] = useReducer((state, { type, payload }) => {
     switch (type) {
       case SIGNUP_SUCCESS:
         return {
