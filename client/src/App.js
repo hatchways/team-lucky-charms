@@ -1,11 +1,8 @@
 import React, { useEffect, useContext } from 'react';
 import { CssBaseline, MuiThemeProvider } from '@material-ui/core';
 import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
-<<<<<<< HEAD
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
-=======
->>>>>>> dev
 
 import { theme } from './themes/theme';
 import './App.css';
