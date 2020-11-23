@@ -5,6 +5,7 @@ import {
   SIGNUP_SUCCESS,
   LOGIN_SUCCESS,
   UNAUTH_USER,
+  UPDATED_USER,
 } from './constants';
 
 const initialState = {
@@ -17,13 +18,13 @@ const userState = createContext(initialState);
 const { Provider } = userState;
 
 const UserContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(({ state }, { type, payload }) => {
+  const [state, dispatch] = useReducer((state, { type, payload }) => {
     switch (type) {
       case SIGNUP_SUCCESS:
         return {
           ...state,
           user: payload,
-          isAuthenticated: false,
+          isAuthenticated: true,
           loading: false,
         };
       case LOGIN_SUCCESS:
@@ -52,6 +53,11 @@ const UserContextProvider = ({ children }) => {
           ...state,
           loading: false,
         };
+      case UPDATED_USER:
+        return {
+          ...state,
+          user: payload,
+        }
       default:
         throw new Error();
     }
