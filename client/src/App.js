@@ -3,7 +3,6 @@ import { CssBaseline, MuiThemeProvider } from '@material-ui/core';
 import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
 
 import { theme } from './themes/theme';
-import './App.css';
 import Explore from './pages/Explore';
 import Navbar from './components/Navbar/Navbar';
 import Launch from './pages/Launch';
