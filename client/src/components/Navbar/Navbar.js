@@ -8,6 +8,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { NavLink, useHistory } from 'react-router-dom';
 import isEmpty from 'is-empty';
+import { disconnectClient } from '../../socketio-client';
 
 // ASSETS
 import logo from '../../assets/images/logos/logo.png';
@@ -79,6 +80,7 @@ const Navbar = () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
+    disconnectClient();
     history.push('/login');
     handleClose();
   };

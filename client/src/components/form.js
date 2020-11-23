@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext } from 'react';
 import {
   Typography,
   Container,
@@ -6,42 +6,44 @@ import {
   makeStyles,
   Button,
   Divider,
-} from "@material-ui/core";
-import { Link, useHistory } from "react-router-dom";
+} from '@material-ui/core';
+import { Link, useHistory } from 'react-router-dom';
 
-import TextInput from "./TextInput";
-import { userState } from "../provider/UserContext";
-import { LOGIN_SUCCESS, SIGNUP_SUCCESS } from "../provider/constants";
+import TextInput from './TextInput';
+import { userState } from '../provider/UserContext';
+import { LOGIN_SUCCESS, SIGNUP_SUCCESS } from '../provider/constants';
+
+import { connectClient } from '../socketio-client';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   form: {
     marginTop: theme.spacing(1),
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   submit: {
     marginTop: theme.spacing(4),
-    color: "white",
-    height: "4em",
-    width: "50%",
+    color: 'white',
+    height: '4em',
+    width: '50%',
     backgroundColor: theme.appTheme.background,
   },
   description: {
     margin: theme.spacing(0.5, 3, 4),
   },
   divider: {
-    height: "0.25em",
-    width: "8vh",
-    margin: "3em",
+    height: '0.25em',
+    width: '8vh',
+    margin: '3em',
     backgroundColor: theme.appTheme.background,
   },
   warning: {
@@ -57,12 +59,12 @@ const SignupLoginForm = ({
   buttonText,
   formName,
 }) => {
-  const [name, setName] = useState({ value: "", error: "" });
-  const [email, setEmail] = useState({ value: "", error: "" });
-  const [password, setPassword] = useState({ value: "", error: "" });
+  const [name, setName] = useState({ value: '', error: '' });
+  const [email, setEmail] = useState({ value: '', error: '' });
+  const [password, setPassword] = useState({ value: '', error: '' });
   const [confirmPassword, setConfirmPassword] = useState({
-    value: "",
-    error: "",
+    value: '',
+    error: '',
   });
 
   const classes = useStyles();
@@ -73,24 +75,24 @@ const SignupLoginForm = ({
   const validateFields = () => {
     let isValid = true;
 
-    if (formName === "signup" && name.value === "") {
-      setName({ ...name, error: "Name is required" });
+    if (formName === 'signup' && name.value === '') {
+      setName({ ...name, error: 'Name is required' });
       isValid = false;
     }
 
     if (
       !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-        email.value
+        email.value,
       )
     ) {
-      setEmail({ ...email, error: "Invalid Email" });
+      setEmail({ ...email, error: 'Invalid Email' });
       isValid = false;
     }
     if (password.value.length < 6) {
-      setPassword({ ...password, error: "Invalid Password" });
+      setPassword({ ...password, error: 'Invalid Password' });
       isValid = false;
     }
-    if (formName === "signup" && password.value !== confirmPassword.value) {
+    if (formName === 'signup' && password.value !== confirmPassword.value) {
       setConfirmPassword({
         ...confirmPassword,
         error: "Passwords don't match",
@@ -120,13 +122,14 @@ const SignupLoginForm = ({
 
   const loginUser = async () => {
     try {
-      const res = await fetch("/login", {
-        method: "POST",
+      const res = await fetch('/login', {
+        method: 'POST',
         body: JSON.stringify({ email: email.value, password: password.value }),
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
       const data = await res.json();
       if (!data.errors) {
+        connectClient();
         dispatch({ type: LOGIN_SUCCESS, payload: data.user });
         history.push(`/users/${data.user._id}`);
       }
@@ -140,15 +143,15 @@ const SignupLoginForm = ({
 
   const signUpUser = async () => {
     try {
-      const res = await fetch("/register", {
-        method: "POST",
+      const res = await fetch('/register', {
+        method: 'POST',
         body: JSON.stringify({
           email: email.value,
           name: name.value,
           password: password.value,
           confirmPassword: confirmPassword.value,
         }),
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
       });
       const data = await res.json();
       if (!data.errors) {
@@ -169,9 +172,9 @@ const SignupLoginForm = ({
     const isValid = validateFields();
 
     if (isValid) {
-      if (formName === "signup") {
+      if (formName === 'signup') {
         signUpUser();
-      } else if (formName === "login") {
+      } else if (formName === 'login') {
         loginUser();
       }
     }
