@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Avatar, Box, makeStyles, Typography } from '@material-ui/core';
 
 // ASSETS
-import avatar from '../../assets/images/user.png';
 import linkedin from '../../assets/images/linkedin-icon.png';
 import angellist from '../../assets/images/angellist-icon.png';
 
@@ -13,6 +12,7 @@ import TextBubble from '../TextBubble';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
+    fontSize: '50px',
     height: '100px',
     margin: theme.spacing(4, 0, 2, 0),
     width: '100px',
@@ -84,7 +84,13 @@ const Sidebar = ({ isOwnProfile, user }) => {
       />
       <Box className={classes.sidebar}>
         <Box className={classes.userMeta}>
-          <Avatar alt="User" src={avatar} className={classes.avatar} />
+          <Avatar
+            alt="User"
+            src={user.avatar.length > 0 ? user.avatar : null}
+            className={classes.avatar}
+          >
+            {user.name[0]}
+          </Avatar>
           <Typography element="h1" className={classes.userName}>
             {user.name}
           </Typography>

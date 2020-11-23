@@ -7,11 +7,14 @@ import { Grid, Avatar, Button } from '@material-ui/core';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { NavLink, useHistory } from 'react-router-dom';
+import isEmpty from 'is-empty';
 
-import logo from "../../assets/images/logos/logo.png";
-import avatar from "../../assets/images/user.png";
-import { userState } from "../../provider/UserContext";
-import { LOGOUT_USER } from "../../provider/constants";
+// ASSETS
+import logo from '../../assets/images/logos/logo.png';
+
+// CONTEXT
+import { userState } from '../../provider/UserContext';
+import { LOGOUT_USER } from '../../provider/constants';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -93,7 +96,9 @@ const Navbar = () => {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <Avatar alt="User" src={avatar} />
+        <Avatar alt="User" src={!isEmpty(user.avatar) ? user.avatar : null}>
+          {user.name[0]}
+        </Avatar>
       </Button>
       <Menu
         id="profile-menu"
@@ -102,7 +107,11 @@ const Navbar = () => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={NavLink} to={`/users/${user._id}`} onClick={handleClose}>
+        <MenuItem
+          component={NavLink}
+          to={`/users/${user._id}`}
+          onClick={handleClose}
+        >
           Profile
         </MenuItem>
         <MenuItem onClick={logout}>Logout</MenuItem>

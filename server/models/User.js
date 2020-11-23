@@ -5,6 +5,10 @@ const Schema = mongoose.Schema;
 //from now on we will decide prior to starting the tickets what the names should be for the fields
 const userSchema = new Schema(
   {
+    avatar: {
+      type: String,
+      default: '',
+    },
     name: {
       type: String,
     },
@@ -17,7 +21,7 @@ const userSchema = new Schema(
     },
     location: {
       type: String,
-      default: 'Anywhere',
+      default: 'Location',
     },
     phone: {
       type: String,

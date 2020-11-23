@@ -10,9 +10,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import isEmpty from 'is-empty';
+import { useDropzone } from 'react-dropzone';
 
+// CONTEXT
 import { UPDATED_USER } from '../../provider/constants';
 import { userState } from '../../provider/UserContext';
+
+// COMPONENTS
 import Button from '../Button';
 
 const useStyles = makeStyles((theme) => ({
@@ -34,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#fff',
     boxShadow:
       '0 0.1px 1.5px rgba(0, 0, 0, 0.028), 0 0.4px 4.9px rgba(0, 0, 0, 0.042), 0 2px 22px rgba(0, 0, 0, 0.07)',
-    // borderRadius: '10px',
     left: '50%',
     top: '50%',
     transform: 'translate(-50%, -50%)',
@@ -44,15 +47,40 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     position: 'absolute',
   },
-  form: {},
+  dropzone: {
+    width: '60px',
+    height: '60px',
+    borderRadius: '50%',
+    marginBottom: theme.spacing(1),
+    '&:hover': {
+      cursor: 'pointer',
+    },
+  },
+  error: {
+    color: theme.appTheme.warning,
+    fontSize: '16px',
+  },
   header: {
     fontSize: '24px',
     fontWeight: '600',
     marginBottom: theme.spacing(2, 0),
   },
+  removePhoto: {
+    marginTop: theme.spacing(1),
+    '&:hover': {
+      cursor: 'pointer',
+    },
+  },
+  uploadAvatar: {
+    margin: theme.spacing(1, 0),
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 }));
 
-// TODO: create loading spinner
+// TODO: add picture/avatar upload
 const EditProfileModal = ({ open, onCancel }) => {
   const {
     dispatch,
@@ -64,18 +92,36 @@ const EditProfileModal = ({ open, onCancel }) => {
   const [location, setLocation] = useState('');
   const [errors, setErrors] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [avatar, setAvatar] = useState(null);
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: 'image/*',
+    onDrop: (acceptedFiles) => {
+      handleAddedAvatarImage(acceptedFiles);
+    },
+  });
+
+  const handleAddedAvatarImage = (images) => {
+    const addedImages = images.map((image) =>
+      Object.assign(image, { preview: URL.createObjectURL(image) }),
+    );
+    const firstImage = addedImages[0];
+    setAvatar(firstImage);
+  };
 
   const classes = useStyles();
 
   const checkIfUpdated = (data) => {
     const payload = {};
-
     if (!isEmpty(data.name)) payload.name = data.name;
     if (!isEmpty(data.email)) payload.email = data.email;
     if (!isEmpty(data.location)) payload.location = data.location;
     if (!isEmpty(data.aboutMe)) payload.aboutMe = data.aboutMe;
+    if (!isEmpty(data.avatar)) payload.avatar = data.avatar;
 
-    return payload;
+    return {
+      isValid: Object.keys(payload).length > 0,
+      payload,
+    };
   };
 
   const handleErrors = (errors) => {
@@ -87,13 +133,37 @@ const EditProfileModal = ({ open, onCancel }) => {
     setEmail('');
     setLocation('');
     setAboutMe('');
+    setAvatar(null);
+    setErrors(false);
   };
 
   const onSubmitFormHandler = async () => {
     setIsLoading(true);
-    const payload = checkIfUpdated({ name, aboutMe, email, location });
+    const { isValid, payload } = checkIfUpdated({
+      name,
+      aboutMe,
+      email,
+      location,
+      avatar,
+    });
+
+    if (!isValid) {
+      setIsLoading(false);
+      setErrors({ message: 'Nothing has been updated' });
+      return;
+    }
 
     try {
+      if (!isEmpty(payload.avatar)) {
+        const formData = new FormData();
+        formData.append('images', payload.avatar);
+        const response = await fetch(`/api/users/${user._id}/imageUpload`, {
+          method: 'POST',
+          body: formData,
+        });
+        const avatarUrls = await response.json();
+        payload.avatar = avatarUrls[0];
+      }
       const updatedUser = await fetch(`/api/users/${user._id}`, {
         method: 'PUT',
         body: JSON.stringify(payload),
@@ -116,31 +186,50 @@ const EditProfileModal = ({ open, onCancel }) => {
     }
   };
 
+  const onCancelHandler = () => {
+    resetInputs();
+    onCancel();
+  };
+
+  const displayAvatarPreview = () => {
+    if (!isEmpty(user.avatar) && isEmpty(avatar)) return user.avatar;
+    if (!isEmpty(avatar)) return avatar.preview;
+    return null;
+  };
+
   return (
-    <Modal open={open} disableBackdropClick>
+    <Modal open={open}>
       <div className={classes.content}>
         <Typography element="h3" className={classes.header}>
           Edit Profile
         </Typography>
         <form className={classes.form}>
-          <div style={{ marginBottom: '16px' }}>
-            <Box>
+          <Box className={classes.uploadAvatar}>
+            <div {...getRootProps({ className: classes.dropzone })}>
+              <input {...getInputProps()} />
               <Avatar
                 id="change-avatar"
                 alt={user.name[0]}
                 className={classes.avatar}
+                src={displayAvatarPreview()}
               >
                 {user.name[0]}
               </Avatar>
+            </div>
+            <InputLabel htmlFor="change-avatar" id="change-avatar-label">
+              Change profile photo
+            </InputLabel>
+            {!isEmpty(avatar) ? (
               <InputLabel
-                style={{ textAlign: 'center', marginBottom: '16px' }}
-                htmlFor="change-avatar"
-                id="change-avatar-label"
+                htmlFor="delete-avatar"
+                id="delete-avatar-button"
+                className={classes.removePhoto}
+                onClick={() => setAvatar(null)}
               >
-                Change profile photo
+                Remove photo
               </InputLabel>
-            </Box>
-          </div>
+            ) : null}
+          </Box>
 
           <Box className={classes.box}>
             <TextField
@@ -189,7 +278,9 @@ const EditProfileModal = ({ open, onCancel }) => {
             />
           </Box>
 
-          <div>{errors.message}</div>
+          <Typography align="center" className={classes.error}>
+            {errors.message}
+          </Typography>
 
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             {isLoading ? <CircularProgress /> : null}
@@ -200,7 +291,7 @@ const EditProfileModal = ({ open, onCancel }) => {
             </Button>
           </div>
           <div className={classes.center}>
-            <Button outlined onClick={onCancel}>
+            <Button outlined onClick={onCancelHandler}>
               Cancel
             </Button>
           </div>
