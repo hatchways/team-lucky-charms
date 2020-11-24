@@ -1,5 +1,5 @@
-const Project = require("../models/projects");
-const User = require("../models/User");
+const Project = require('../models/projects');
+const User = require('../models/User');
 
 async function getAllProjects(req, res) {
   const projects = await Project.find().sort({ name: 1 });
@@ -37,7 +37,7 @@ async function filteredProjects(req, res) {
 async function getProjectsForUser(req, res) {
   const projects = await User.find({ _id: req.params.userId })
     .select({ username: 1 })
-    .populate("projects", "title");
+    .populate('projects', 'title');
 
   if (!projects) {
     return res.status(404);
@@ -66,11 +66,11 @@ async function createProjectForUser(req, res) {
       // Add new project id to User
       await User.updateOne(
         { _id: req.id },
-        { $push: { projects: result._id } }
+        { $push: { projects: result._id } },
       );
     } catch (ex) {
       console.log(ex);
-      res.status(500).send("Unable to create project");
+      res.status(500).send('Unable to create project');
     }
   } catch (error) {
     console.log(error);

@@ -6,17 +6,18 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: props.outlined ? '#fff' : theme.palette.primary.main,
     border: props.outlined ? '1px solid #ddd' : 'null',
     color: props.outlined ? '#000' : '#fff',
-    margin: theme.spacing(2, 0),
+    margin: props.margin ? theme.spacing(2, 0) : 0,
     padding: theme.spacing(2),
     textTransform: 'uppercase',
     width: '175px',
+    textAlign: props.align ? props.align : '',
   }),
 }));
 
-const Button = ({ children, ...otherProps }) => {
+const Button = ({ children, onClick, ...otherProps }) => {
   const classes = useStyles({...otherProps});
 
-  return <MuiButton className={classes.button}>{children}</MuiButton>;
+  return <MuiButton onClick={onClick} className={classes.button}>{children}</MuiButton>;
 };
 
 export default Button;

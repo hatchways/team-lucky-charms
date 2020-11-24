@@ -10,8 +10,8 @@
     "axios": "^0.21.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-dropzone": "^11.2.4",
     "react-router-dom": "^5.1.2",
+    "react-dropzone": "^11.2.4",
     "react-scripts": "^4.0.0",
     "socket.io-client": "^3.0.3"
   },
@@ -24,7 +24,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "proxy": "http://localhost:3001",
+  "proxy": "http://127.0.0.1:3001/",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -36,5 +36,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "prettier": "^2.1.2"
   }
 }
