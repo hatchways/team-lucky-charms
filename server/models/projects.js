@@ -8,7 +8,7 @@ const projectsSchema = new mongoose.Schema(
     location: { type: String },
     industry: { type: String },
     images: { type: Array }, // array of image urls
-    deadline: { type: Date },
+    deadline: { type: Date, default: '2021-01-31' },
     fundingGoal: { type: Number },
     isLive: { type: Boolean, default: false },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
