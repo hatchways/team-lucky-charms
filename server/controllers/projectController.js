@@ -1,6 +1,18 @@
 const Project = require('../models/projects');
 const User = require('../models/User');
 
+async function getProject(req, res) {
+  const project = await Project.findOne({ _id: req.params.projectId }).populate(
+    'owner',
+    'name',
+  );
+
+  if (!project) {
+    return res.status(400);
+  }
+  res.send(project);
+}
+
 async function getAllProjects(req, res) {
   const projects = await Project.find().sort({ name: 1 });
   if (!projects) {
@@ -10,7 +22,9 @@ async function getAllProjects(req, res) {
 }
 
 async function getProjectsForUser(req, res) {
-  const projects = await Project.find({ owner: req.params.userId });
+  const projects = await User.find({ _id: req.params.userId })
+    .select({ username: 1 })
+    .populate('projects', 'title');
 
   if (!projects) {
     return res.status(404);
@@ -33,13 +47,13 @@ async function createProjectForUser(req, res) {
     });
     try {
       const result = await project.save();
+      res.status(201).send(result);
 
       // Add new project id to User
       await User.updateOne(
         { _id: req.id },
         { $push: { projects: result._id } },
       );
-      res.status(201).send(result);
     } catch (ex) {
       console.log(ex);
       res.status(500).send('Unable to create project');
@@ -50,4 +64,9 @@ async function createProjectForUser(req, res) {
   }
 }
 
-module.exports = { getAllProjects, getProjectsForUser, createProjectForUser };
+module.exports = {
+  getAllProjects,
+  getProjectsForUser,
+  createProjectForUser,
+  getProject,
+};

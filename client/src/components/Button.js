@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button as MuiButton, makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
   button: (props) => ({
@@ -14,10 +15,14 @@ const useStyles = makeStyles((theme) => ({
   }),
 }));
 
-const Button = ({ children, onClick, ...otherProps }) => {
-  const classes = useStyles({...otherProps});
+const Button = ({ children, onClick, className, ...otherProps }) => {
+  const classes = useStyles({ ...otherProps });
 
-  return <MuiButton onClick={onClick} className={classes.button}>{children}</MuiButton>;
+  return (
+    <MuiButton onClick={onClick} className={clsx(classes.button, className)}>
+      {children}
+    </MuiButton>
+  );
 };
 
 export default Button;

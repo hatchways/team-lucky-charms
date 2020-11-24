@@ -1,4 +1,4 @@
-import React, { createContext, useReducer } from "react";
+import React, { createContext, useReducer } from 'react';
 import {
   LOGOUT_USER,
   LOADING_USER,
@@ -57,7 +57,7 @@ const UserContextProvider = ({ children }) => {
         return {
           ...state,
           user: payload,
-        }
+        };
       default:
         throw new Error();
     }
