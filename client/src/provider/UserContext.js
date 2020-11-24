@@ -5,6 +5,7 @@ import {
   SIGNUP_SUCCESS,
   LOGIN_SUCCESS,
   UNAUTH_USER,
+  UPDATED_USER,
 } from './constants';
 
 const initialState = {
@@ -23,7 +24,7 @@ const UserContextProvider = ({ children }) => {
         return {
           ...state,
           user: payload,
-          isAuthenticated: false,
+          isAuthenticated: true,
           loading: false,
         };
       case LOGIN_SUCCESS:
@@ -52,6 +53,11 @@ const UserContextProvider = ({ children }) => {
           ...state,
           loading: false,
         };
+      case UPDATED_USER:
+        return {
+          ...state,
+          user: payload,
+        }
       default:
         throw new Error();
     }

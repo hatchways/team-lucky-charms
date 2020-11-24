@@ -6,10 +6,10 @@ import { useHistory } from "react-router-dom";
 const SignUp = () => {
   const history = useHistory();
   const {
-    state: { isAuthenticated },
+    state: { isAuthenticated, user },
   } = useContext(userState);
   if (isAuthenticated) {
-    history.push("/profile");
+    history.push(`/users/${user._id}`);
   }
   return (
     <SignupLoginForm

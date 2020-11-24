@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Grid, makeStyles, Typography } from '@material-ui/core';
+import { format as d3Format } from 'd3-format';
 
 import TextBubble from './TextBubble';
 
@@ -41,13 +42,11 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Project = ({ data }) => {
+  const format = d3Format(',');
   const classes = useStyles();
   const {
-    currentFunding,
-    daysLeft,
-    equity,
     fundingGoal,
-    img,
+    images,
     industry,
     title,
   } = data;
@@ -55,7 +54,7 @@ const Project = ({ data }) => {
     <Grid item xs={6}>
       <Box className={classes.container}>
         <div
-          style={{ backgroundImage: `url(${img})` }}
+          style={{ backgroundImage: `url(${images[0]})` }}
           className={classes.img}
         >
           <TextBubble>{industry}</TextBubble>
@@ -65,13 +64,13 @@ const Project = ({ data }) => {
             {title}
           </Typography>
           <Typography element="h3" className={classes.funding}>
-            ${currentFunding}
-            <span className={classes.goal}> / {fundingGoal}</span>
+            $12,345
+            <span className={classes.goal}> / {format(fundingGoal)}</span>
           </Typography>
           <Typography element="h4" className={classes.footer}>
-            Equity exchange: {equity}%
+            Equity exchange: 10%
             <span style={{ margin: '0 16px' }}>|</span>
-            {daysLeft} days to go
+            12 days to go
           </Typography>
         </Box>
       </Box>
