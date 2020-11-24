@@ -149,8 +149,8 @@ const Profile = () => {
   return (
     <div className={classes.container}>
       {isLoading ? (
-        // TODO: Create nicer looking isLoading (placeholders, etc.)
-        <h1>isLoading...</h1>
+        // TODO: Create nicer looking loading (placeholders, etc.)
+        <h1>Loading...</h1>
       ) : (
         <>
           <Sidebar isOwnProfile={isOwnProfile} user={currentUser} />
