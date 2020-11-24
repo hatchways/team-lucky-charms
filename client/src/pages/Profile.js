@@ -1,17 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Avatar, Box, Grid, makeStyles, Typography } from '@material-ui/core';
+import { Box, Grid, makeStyles, Typography } from '@material-ui/core';
 import { useParams } from 'react-router-dom';
 
 // COMPONENTS
 import Project from '../components/Project';
-import Button from '../components/Button';
-import TextBubble from '../components/TextBubble';
-
-// ASSETS
-import investor from '../assets/images/investor.png';
-import linkedin from '../assets/images/linkedin-icon.png';
-import angellist from '../assets/images/angellist-icon.png';
-import projects from '../data/testing/projects';
+import Sidebar from '../components/Profile/Sidebar';
 
 // CONTEXT
 import { userState } from '../provider/UserContext';
@@ -21,9 +14,6 @@ const useStyles = makeStyles((theme) => ({
     height: '100px',
     margin: theme.spacing(4, 0, 2, 0),
     width: '100px',
-  },
-  button: {
-    margin: theme.spacing(2, 0),
   },
   container: {
     display: 'flex',
@@ -47,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
   mainHeader: {
     fontSize: '40px',
     fontWeight: '600',
-    paddingLeft: '12px',
   },
   metaFooter: {
     alignItems: 'center',
@@ -102,18 +91,17 @@ const Profile = () => {
   const classes = useStyles();
   const [currentUser, setCurrentUser] = useState({ _id: null });
   const [isOwnProfile, setIsOwnProfile] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [errors, setErrors] = useState(null);
+  const [projects, setProjects] = useState([]);
 
-  const handleCurrentUser = (response) => {
-    setLoading(true);
-    if (isAuthenticated && userId === authUser._id) {
-      setIsOwnProfile(true);
-      setCurrentUser(authUser);
-      setLoading(false);
-    } else {
-      setIsOwnProfile(false);
-      getUser();
+  const getProjects = async () => {
+    try {
+      const response = await fetch(`/api/projects/${userId}`);
+      const projects = await response.json();
+      setProjects(projects);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -129,13 +117,26 @@ const Profile = () => {
       .catch((error) => {
         setErrors(error);
       })
-      .finally(() => setLoading(false));
+      .finally(() => setIsLoading(false));
+  };
+
+  const handleCurrentUser = () => {
+    setIsLoading(true);
+    getProjects();
+    if (isAuthenticated && userId === authUser._id) {
+      setIsOwnProfile(true);
+      setCurrentUser(authUser);
+      setIsLoading(false);
+    } else {
+      setIsOwnProfile(false);
+      getUser();
+    }
   };
 
   useEffect(() => {
     handleCurrentUser();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [userId, authUser]);
 
   if (errors) {
     return (
@@ -147,78 +148,28 @@ const Profile = () => {
 
   return (
     <div className={classes.container}>
-      {loading ? (
+      {isLoading ? (
         // TODO: Create nicer looking loading (placeholders, etc.)
         <h1>Loading...</h1>
       ) : (
         <>
-          <Box className={classes.sidebar}>
-            <Box className={classes.userMeta}>
-              <Avatar alt="User" src={investor} className={classes.avatar} />
-              <Typography element="h1" className={classes.userName}>
-                {currentUser.name}
-              </Typography>
-              <Typography
-                element="h2"
-                variant="subtitle1"
-                className={classes.location}
-              >
-                Toronto, Canada
-              </Typography>
-              <Button outlined={isOwnProfile} className={classes.button}>
-                {isOwnProfile ? 'Edit Profile' : 'Send Message'}
-              </Button>
-              <Typography
-                element="p"
-                variant="subtitle1"
-                className={classes.description}
-              >
-                My interests focus on the role of technology in enhancing
-                organizational effectiveness.
-              </Typography>
-              <Typography element="h3" className={classes.subheader}>
-                Expertise:
-              </Typography>
-              <Box className={classes.textBubbles}>
-                <TextBubble outlined>Marketing</TextBubble>
-                <TextBubble outlined>Sales</TextBubble>
-                <TextBubble outlined>Technology</TextBubble>
-              </Box>
-            </Box>
-            <Box className={classes.metaFooter}>
-              <Typography className={classes.subheader}>
-                Looking to invest in:
-              </Typography>
-              <Box className={classes.textBubbles}>
-                <TextBubble>Technology</TextBubble>
-              </Box>
-              <Box className={classes.socialIcons}>
-                <Avatar
-                  className={classes.socialIcon}
-                  src={linkedin}
-                  alt="social-media"
-                />
-                <Avatar
-                  className={classes.socialIcon}
-                  src={angellist}
-                  alt="social-media"
-                />
-              </Box>
-            </Box>
-          </Box>
+          <Sidebar isOwnProfile={isOwnProfile} user={currentUser} />
           <Box className={classes.main}>
             <Typography
               element="h1"
               variant="h1"
               className={classes.mainHeader}
             >
-              Invested in:
+              Created Projects:
             </Typography>
             <Grid container spacing={3} className={classes.projects}>
-              {projects.map((project) => (
-                // TODO: change the key to project ID when fetching real projects
-                <Project key={project.title} data={project} />
-              ))}
+              {projects.length > 0 ? (
+                projects.map((project) => (
+                  <Project key={project._id} data={project} />
+                ))
+              ) : (
+                <h1>No projects created yet</h1>
+              )}
             </Grid>
           </Box>
         </>
