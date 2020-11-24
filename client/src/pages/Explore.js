@@ -77,7 +77,7 @@ const Explore = () => {
     const projects = result.data.projects;
     if (!projects.errors) {
       setProjects(projects);
-      setTotalResults(result.data.total);;;
+      setTotalResults(result.data.total);
     }
     if (projects.errors) {
       console.log(projects.errors);

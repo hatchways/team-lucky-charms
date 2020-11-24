@@ -163,10 +163,13 @@ const Profile = () => {
               Created Projects:
             </Typography>
             <Grid container spacing={3} className={classes.projects}>
-              {projects.map((project) => (
-                // TODO: change the key to project ID when fetching real projects
-                <Project key={project.title} data={project} gridSize={6} />
-              ))}
+              {projects.length > 0 ? (
+                projects.map((project) => (
+                  <Project key={project._id} data={project} gridSize={6} />
+                ))
+              ) : (
+                <h1>No projects created yet</h1>
+              )}
             </Grid>
           </Box>
         </>
