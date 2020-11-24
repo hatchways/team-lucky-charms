@@ -49,7 +49,7 @@ const Project = ({ data, gridSize }) => {
     <Grid item xs={gridSize}>
       <Box className={classes.container}>
         <div
-          //style={{ backgroundImage: `url(${images[0]})` }}
+          style={{ backgroundImage: `url(${images[0]})` }}
           className={classes.img}
         >
           <TextBubble>{industry}</TextBubble>
