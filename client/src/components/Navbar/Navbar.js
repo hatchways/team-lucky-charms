@@ -55,7 +55,11 @@ const Navbar = () => {
             <Typography variant="h6">Product Launch</Typography>
           </Grid>
 
-          {isAuthenticated ? <AuthenticatedNav /> : <UnauthenticatedNav />}
+           {isAuthenticated ? (
+            <AuthenticatedNav />
+          ) : (
+            <UnauthenticatedNav />
+          )}
         </Toolbar>
       </AppBar>
     </div>
