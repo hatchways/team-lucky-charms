@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(4, 0, 2, 0),
     width: '100px',
   },
+  button: {
+    margin: theme.spacing(2, 0),
+  },
   container: {
     display: 'flex',
     minHeight: 'calc(100vh - 64px)',
@@ -162,7 +165,7 @@ const Profile = () => {
               >
                 Toronto, Canada
               </Typography>
-              <Button outlined={isOwnProfile}>
+              <Button outlined={isOwnProfile} className={classes.button}>
                 {isOwnProfile ? 'Edit Profile' : 'Send Message'}
               </Button>
               <Typography
