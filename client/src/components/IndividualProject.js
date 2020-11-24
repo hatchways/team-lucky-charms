@@ -104,7 +104,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const IndividualProject = ({ project, user }) => {
+const IndividualProject = ({ project }) => {
   const {
     title,
     subtitle,
@@ -114,8 +114,8 @@ const IndividualProject = ({ project, user }) => {
     investors,
     industry,
     location,
+    owner,
   } = project;
-  const { name } = user;
 
   const classes = useStyles();
   return (
@@ -178,9 +178,6 @@ const IndividualProject = ({ project, user }) => {
                 </Typography>
                 <Typography variant="subtitle1">backers</Typography>
               </Grid>
-              {/* <Grid item xs={2}>
-                <Divider orientation="vertical" />
-              </Grid> */}
               <Grid item xs={2}>
                 <hr className={classes.divider} />
               </Grid>
@@ -197,7 +194,7 @@ const IndividualProject = ({ project, user }) => {
             <Box className={classes.userInfo}>
               <Avatar alt="User" src={avatar} className={classes.avatar} />
               <Typography element="h1" className={classes.userName}>
-                {name}
+                {owner.name}
               </Typography>
               <Typography
                 element="h2"

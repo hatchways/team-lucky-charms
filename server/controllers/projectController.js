@@ -2,12 +2,15 @@ const Project = require('../models/projects');
 const User = require('../models/User');
 
 async function getProject(req, res) {
-  const project = await Project.findOne({ _id: req.params.projectId });
+  const project = await Project.findOne({ _id: req.params.projectId }).populate(
+    'owner',
+    'name',
+  );
+
   if (!project) {
     return res.status(400);
   }
-  const user = await User.findOne({ _id: project.owner }).select({ name: 1 });
-  res.send({ project, user });
+  res.send(project);
 }
 
 async function getAllProjects(req, res) {

@@ -58,7 +58,7 @@ function App() {
               <Route path="/login" exact component={Login} />
               <Route path="/signup" exact component={SignUp} />
               <Route path="/users/:userId" component={Profile} />
-              <Route path="/project" component={ProjectDetails} />
+              <Route path="/project/:projectId" component={ProjectDetails} />
               <ProtectedRoutes path="/launch" exact component={Launch} />
               {/* need suggestion for this route name be payments or funds */}
               <ProtectedRoutes

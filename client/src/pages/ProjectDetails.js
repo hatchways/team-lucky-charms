@@ -1,37 +1,43 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import IndividualProject from '../components/IndividualProject';
-
-const projectID = window.location.pathname.split('/').pop();
 
 const Project = () => {
   const [project, setProject] = useState();
-  const [user, setUser] = useState();
   const [errors, setErrors] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { projectId } = useParams();
+
   useEffect(() => {
     const getProjectDetails = async () => {
-      await fetch(`/api/projects/${projectID}`, {
+      setLoading(true);
+      await fetch(`/api/projects/${projectId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       })
         .then((response) => response.json())
         .then((response) => {
-          setProject(response.project);
-          setUser(response.user);
+          setProject(response);
+          setLoading(false);
         })
         .catch((error) => setErrors(error));
     };
 
     getProjectDetails();
-  }, []);
+  }, [projectId]);
 
   if (errors) {
     return <h1>Error retrieving project</h1>;
   }
 
   return (
-    <>
-      {project && user && <IndividualProject project={project} user={user} />}
-    </>
+    <div>
+      {loading ? (
+        <h1>Loading project details...</h1>
+      ) : (
+        <IndividualProject project={project} />
+      )}
+    </div>
   );
 };
 
