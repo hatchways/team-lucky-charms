@@ -80,7 +80,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// TODO: add picture/avatar upload
 const EditProfileModal = ({ open, onCancel }) => {
   const {
     dispatch,
