@@ -15,7 +15,6 @@ import projects from '../data/testing/projects';
 
 // CONTEXT
 import { userState } from '../provider/UserContext';
-console.log(projects);
 
 const useStyles = makeStyles((theme) => ({
   avatar: {

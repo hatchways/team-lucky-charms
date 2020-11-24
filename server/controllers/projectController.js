@@ -11,6 +11,8 @@ async function getAllProjects(req, res) {
 
 async function filteredProjects(req, res) {
   console.log(req.body.id);
+  const pagination = req.body.pagination ? req.body.pagination : 2;
+  const page = req.body.page ? req.body.page : 1;
   const projects = await Project.find({
     $and: [
       { owner: { $ne: req.body.id } },
@@ -20,13 +22,16 @@ async function filteredProjects(req, res) {
         deadline: { $gte: req.body.deadline },
       },
     ],
-  }).sort({
-    createdAt: 1,
-  });
+  })
+    .sort({
+      createdAt: 1,
+    })
+    .skip((page - 1) * pagination)
+    .limit(pagination);
   if (!projects) {
     return res.status(404);
   }
-  res.send(projects);
+  res.send({ total: projects.length, projects });
 }
 
 async function getProjectsForUser(req, res) {

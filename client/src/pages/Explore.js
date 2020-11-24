@@ -5,15 +5,16 @@ import {
   Grid,
   TextField,
   InputAdornment,
-  MenuItem,
+  Button,
 } from '@material-ui/core';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
-import DateRangeIcon from '@material-ui/icons/DateRange';
 import LocationCityIcon from '@material-ui/icons/LocationCity';
 import React, { useEffect, useState, useContext } from 'react';
+import axios from 'axios';
+
+import useDebouncer from './../utils/hooks';
 import Project from '../components/Project';
 import { userState } from './../provider/UserContext';
-import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -39,13 +40,30 @@ const Explore = () => {
   } = useContext(userState);
   const id = user ? user._id : '';
   const [projects, setProjects] = useState([]);
+  const [totalResults, setTotalResults] = useState(0);
   const [filters, setFilters] = useState({
     industry: '',
     location: '',
     deadline: new Date().toISOString().split('T')[0],
     id: id,
+    pagination: 9,
+    page: 1,
   });
   const classes = useStyles();
+ 
+  const handleNext = () => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      page: totalResults > 0 ? filters.page + 1 : 1,
+    }));
+  };
+
+  const handlePrev = () => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      page: filters.page !== 1 ? filters.page - 1 : 1,
+    }));
+  };
 
   const updateFilters = (key, value) => {
     setFilters((prevFilters) => ({
@@ -53,27 +71,23 @@ const Explore = () => {
       [key]: value,
     }));
   };
-
-  console.log(filters);
+  
+  const getProjects = useDebouncer(async (filter) => {
+    const result = await axios.post('/api/projects/filteredProjects', filter);
+    const projects = result.data.projects;
+    if (!projects.errors) {
+      setProjects(projects);
+      setTotalResults(result.data.total);;;
+    }
+    if (projects.errors) {
+      console.log(projects.errors);
+    }
+  }, 500);
 
   useEffect(() => {
-    const getProjects = async () => {
-      const result = await axios.post(
-        '/api/projects/filteredProjects',
-        filters,
-      );
-      console.log(result.data);
-      const projects = result.data;
-      if (!projects.errors) {
-        setProjects(projects);
-        console.log(projects);
-      }
-      if (projects.errors) {
-        console.log('errrorrr');
-      }
-    };
-    getProjects();
-  }, [filters]);
+    getProjects(filters);
+  }, [getProjects, filters]);
+
   return (
     <Container component="main" maxWidth="xl" className={classes.container}>
       <Typography component="h1" variant="h3">
@@ -131,11 +145,39 @@ const Explore = () => {
         />
       </Grid>
       <Grid container spacing={3} className={classes.projects}>
-        {projects.length > 1
-          ? projects.map((project) => (
-              <Project key={project._id} data={project} gridSize={4} />
-            ))
-          : <Typography>No Projects to show</Typography>}
+        {projects.length > 0 ? (
+          projects.map((project) => (
+            <Project key={project._id} data={project} gridSize={4} />
+          ))
+        ) : (
+          <Typography>No Projects to show</Typography>
+        )}
+      </Grid>
+      <Grid container justify="center">
+        <div className={classes.root}>
+          <Grid>
+            <Button
+              style={{ margin: '10px 10px 10px 10px' }}
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={filters.page === 1 ? true : false}
+              onClick={handlePrev}
+            >
+              Prev
+            </Button>
+            <Button
+              style={{ margin: '10px 10px 10px 10px' }}
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={totalResults === 0 || totalResults < filters.pagination ? true : false}
+              onClick={handleNext}
+            >
+              Next
+            </Button>
+          </Grid>
+        </div>
       </Grid>
     </Container>
   );
