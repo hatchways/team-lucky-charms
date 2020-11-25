@@ -17,6 +17,7 @@ import { userState } from './provider/UserContext';
 import { LOADING_USER, UNAUTH_USER } from './provider/constants';
 import Loader from './components/Loader';
 import FundingPayment from './components/Funding/Payments';
+import { connectClient } from './socketio-client';
 
 function App() {
   const {
@@ -33,6 +34,7 @@ function App() {
       });
       const user = await result.json();
       if (!user.errors) {
+        connectClient();
         dispatch({ type: LOADING_USER, payload: user.user });
       }
       if (user.errors) {
