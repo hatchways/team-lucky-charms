@@ -21,10 +21,33 @@ async function getAllProjects(req, res) {
   res.send(projects);
 }
 
+async function filteredProjects(req, res) {
+  console.log(req.body.id);
+  const pagination = req.body.pagination ? req.body.pagination : 2;
+  const page = req.body.page ? req.body.page : 1;
+  const projects = await Project.find({
+    $and: [
+      { owner: { $ne: req.body.id } },
+      {
+        industry: { $regex: req.body.industry, $options: 'i' },
+        location: { $regex: req.body.location, $options: 'i' },
+        deadline: { $gte: req.body.deadline },
+      },
+    ],
+  })
+    .sort({
+      createdAt: 1,
+    })
+    .skip((page - 1) * pagination)
+    .limit(pagination);
+  if (!projects) {
+    return res.status(404);
+  }
+  res.send({ total: projects.length, projects });
+}
+
 async function getProjectsForUser(req, res) {
-  const projects = await User.find({ _id: req.params.userId })
-    .select({ username: 1 })
-    .populate('projects', 'title');
+  const projects = await Project.find({ owner: req.params.userId });
 
   if (!projects) {
     return res.status(404);
@@ -43,6 +66,7 @@ async function createProjectForUser(req, res) {
       fundingGoal: req.body.fundingGoal,
       industry: req.body.industry,
       images: req.body.images,
+      deadline: req.body.deadline,
       owner: req.id,
     });
     try {
@@ -69,4 +93,5 @@ module.exports = {
   getProjectsForUser,
   createProjectForUser,
   getProject,
+  filteredProjects,
 };

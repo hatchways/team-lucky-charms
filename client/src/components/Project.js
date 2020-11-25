@@ -41,17 +41,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Project = ({ data }) => {
-  const format = d3Format(',');
+const Project = ({ data, gridSize }) => {
+   const format = d3Format(',');
   const classes = useStyles();
-  const {
-    fundingGoal,
-    images,
-    industry,
-    title,
-  } = data;
+  const { fundingGoal, images, industry, title } = data;
   return (
-    <Grid item xs={6}>
+    <Grid item xs={gridSize}>
       <Box className={classes.container}>
         <div
           style={{ backgroundImage: `url(${images[0]})` }}
