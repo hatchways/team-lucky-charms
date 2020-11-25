@@ -11,7 +11,7 @@ const auth = require('../middleware/authMiddleware');
 
 router.get('/', getAllProjects); // Get all projects (public)
 router.get('/:projectId', getProject);
-//router.get('/:userId', getProjectsForUser); // Get all projects for a specific user
+router.get('/userProjects/:userId', getProjectsForUser); // Get all projects for a specific user
 router.post('/', auth, createProjectForUser); // Authenticate user and create a new project
 router.post('/filteredProjects', auth, filteredProjects); //Returns projects based on filters
 

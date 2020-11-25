@@ -97,7 +97,7 @@ const Profile = () => {
 
   const getProjects = async () => {
     try {
-      const response = await fetch(`/api/projects/${userId}`);
+      const response = await fetch(`/api/projects/userProjects/${userId}`);
       const projects = await response.json();
       setProjects(projects);
     } catch (error) {
