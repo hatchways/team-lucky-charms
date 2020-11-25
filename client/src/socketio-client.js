@@ -1,10 +1,8 @@
 import io from 'socket.io-client';
 
-let socket;
+const socket = io('/', { autoConnect: false });
 
 export function connectClient() {
-  socket = io('/', { autoConnect: false });
-
   socket.on('connect', () => {
     console.log('Connected');
     socket.emit('authentication');
