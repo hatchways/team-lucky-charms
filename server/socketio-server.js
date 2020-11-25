@@ -66,7 +66,7 @@ socketAuth(io, {
     }
   },
   postAuthenticate: (socket) => {
-    console.log(`Socket ${socket.id} authenticated and Connected`);
+    console.log(`Socket ${socket.id} Connected`);
 
     // To add user to map
     if (!userSocketIdMap.has(socket.user)) {
@@ -74,6 +74,7 @@ socketAuth(io, {
     } else {
       socket.disconnect(true);
       console.log('User already connected');
+      console.log(userSocketIdMap);
     }
 
     io.emit('welcome', {
