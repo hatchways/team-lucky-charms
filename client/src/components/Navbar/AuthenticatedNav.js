@@ -1,7 +1,18 @@
 import React, { useContext, useState } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
-import { Avatar, Button, Menu, MenuItem, makeStyles } from '@material-ui/core';
+import {
+  Avatar,
+  Button,
+  Menu,
+  MenuItem,
+  makeStyles,
+  Badge,
+} from '@material-ui/core';
 import isEmpty from 'is-empty';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+
+// COMPONENTS
+import NotificationsCenter from './NotificationsCenter';
 
 // SOCKETS
 import { disconnectClient } from '../../socketio-client';
@@ -31,18 +42,27 @@ const useStyles = makeStyles((theme) => ({
 
 const AuthenticatedNav = () => {
   const history = useHistory();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [profileAnchorEl, setProfileAnchorEl] = useState(null);
+  const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
   const {
     state: { user },
     dispatch,
   } = useContext(userState);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const handleAvatarClick = (event) => {
+    setProfileAnchorEl(event.currentTarget);
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const handleNotificationsClick = (event) => {
+    setNotificationsAnchorEl(event.currentTarget);
+  };
+
+  const handleNotificationsClose = () => {
+    setNotificationsAnchorEl(null);
+  };
+
+  const handleProfileClose = () => {
+    setProfileAnchorEl(null);
   };
   const classes = useStyles();
 
@@ -54,7 +74,6 @@ const AuthenticatedNav = () => {
     });
     disconnectClient();
     history.push('/login');
-    handleClose();
   };
 
   return (
@@ -66,9 +85,22 @@ const AuthenticatedNav = () => {
         Launch
       </NavLink>
       <Button
+        aria-controls="notifications"
+        aria-haspopup="true"
+        onClick={handleNotificationsClick}
+      >
+        <Badge badgeContent={3} color="error">
+          <NotificationsIcon />
+        </Badge>
+      </Button>
+      <NotificationsCenter
+        handleClose={handleNotificationsClose}
+        anchorEl={notificationsAnchorEl}
+      />
+      <Button
         aria-controls="profile"
         aria-haspopup="true"
-        onClick={handleClick}
+        onClick={handleAvatarClick}
       >
         <Avatar alt="User" src={!isEmpty(user.avatar) ? user.avatar : null}>
           {user.name[0]}
@@ -76,15 +108,15 @@ const AuthenticatedNav = () => {
       </Button>
       <Menu
         id="profile-menu"
-        anchorEl={anchorEl}
+        anchorEl={profileAnchorEl}
         keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
+        open={Boolean(profileAnchorEl)}
+        onClose={handleProfileClose}
       >
         <MenuItem
           component={NavLink}
           to={`/users/${user._id}`}
-          onClick={handleClose}
+          onClick={handleProfileClose}
         >
           Profile
         </MenuItem>
