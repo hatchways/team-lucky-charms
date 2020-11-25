@@ -1,6 +1,18 @@
 const Project = require('../models/projects');
 const User = require('../models/User');
 
+async function getProject(req, res) {
+  const project = await Project.findOne({ _id: req.params.projectId }).populate(
+    'owner',
+    'name',
+  );
+
+  if (!project) {
+    return res.status(400);
+  }
+  res.send(project);
+}
+
 async function getAllProjects(req, res) {
   const projects = await Project.find().sort({ name: 1 });
   if (!projects) {
@@ -80,5 +92,6 @@ module.exports = {
   getAllProjects,
   getProjectsForUser,
   createProjectForUser,
+  getProject,
   filteredProjects,
 };
