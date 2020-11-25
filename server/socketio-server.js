@@ -9,23 +9,8 @@ const { TOKEN_SECRET_KEY } = require('./config');
 const User = require('./models/User');
 
 const io = socketio();
-const socketApi = {};
+var socketApi = {};
 socketApi.io = io;
-
-//To keep track of connected users
-const userSocketIdMap = new Map();
-
-//Function to add connected user to map
-function addUser(userId, socketId) {
-  userSocketIdMap.set(userId, socketId);
-  console.log(userSocketIdMap);
-}
-
-//Function to remove socketId when user disconnects.
-function removeUser(userId, socketId) {
-  userSocketIdMap.delete(userId);
-  console.log(userSocketIdMap);
-}
 
 // User verification - recieves jwt token from client as Cookie
 async function verifyUser(token) {
@@ -61,32 +46,19 @@ socketAuth(io, {
       socket.user = userID;
       return callback(null, true);
     } catch (error) {
-      console.log(`Socket ${socket.id} unauthorized.`, error);
+      console.log(`Socket ${socket.id} unauthorized.`);
       return callback({ message: 'Unauthorized user!' });
     }
   },
   postAuthenticate: (socket) => {
-    console.log(`Socket ${socket.id} Connected`);
-
-    // To add user to map
-    if (!userSocketIdMap.has(socket.user)) {
-      addUser(socket.user, socket.id);
-    } else {
-      socket.disconnect(true);
-      console.log('User already connected');
-      console.log(userSocketIdMap);
-    }
-
+    console.log(`Socket ${socket.id} authenticated and Connected`);
     io.emit('welcome', {
       message: `Hello, your socket ID is ${socket.id}`,
     });
   },
   disconnect: (socket) => {
-    //To remove user from map
-    removeUser(socket.user, socket.id);
     console.log(`socket ${socket.id} disconnected.`);
   },
-  timeout: 1000,
 });
 
 module.exports = socketApi;
