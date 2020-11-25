@@ -73,7 +73,6 @@ socketAuth(io, {
       addUser(socket.user, socket.id);
     } else {
       socket.disconnect(true);
-      console.log('postAuth', userSocketIdMap);
       console.log('User already connected');
     }
 
