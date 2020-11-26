@@ -1,12 +1,49 @@
 const Project = require('../models/projects');
 const User = require('../models/User');
 
+async function getProject(req, res) {
+  const project = await Project.findOne({ _id: req.params.projectId }).populate(
+    'owner',
+    'name',
+  );
+
+  if (!project) {
+    return res.status(400);
+  }
+  res.send(project);
+}
+
 async function getAllProjects(req, res) {
   const projects = await Project.find().sort({ name: 1 });
   if (!projects) {
     return res.status(404);
   }
   res.send(projects);
+}
+
+async function filteredProjects(req, res) {
+  console.log(req.body.id);
+  const pagination = req.body.pagination ? req.body.pagination : 2;
+  const page = req.body.page ? req.body.page : 1;
+  const projects = await Project.find({
+    $and: [
+      { owner: { $ne: req.body.id } },
+      {
+        industry: { $regex: req.body.industry, $options: 'i' },
+        location: { $regex: req.body.location, $options: 'i' },
+        deadline: { $gte: req.body.deadline },
+      },
+    ],
+  })
+    .sort({
+      createdAt: 1,
+    })
+    .skip((page - 1) * pagination)
+    .limit(pagination);
+  if (!projects) {
+    return res.status(404);
+  }
+  res.send({ total: projects.length, projects });
 }
 
 async function getProjectsForUser(req, res) {
@@ -29,17 +66,18 @@ async function createProjectForUser(req, res) {
       fundingGoal: req.body.fundingGoal,
       industry: req.body.industry,
       images: req.body.images,
+      deadline: req.body.deadline,
       owner: req.id,
     });
     try {
       const result = await project.save();
+      res.status(201).send(result);
 
       // Add new project id to User
       await User.updateOne(
         { _id: req.id },
         { $push: { projects: result._id } },
       );
-      res.status(201).send(result);
     } catch (ex) {
       console.log(ex);
       res.status(500).send('Unable to create project');
@@ -50,4 +88,10 @@ async function createProjectForUser(req, res) {
   }
 }
 
-module.exports = { getAllProjects, getProjectsForUser, createProjectForUser };
+module.exports = {
+  getAllProjects,
+  getProjectsForUser,
+  createProjectForUser,
+  getProject,
+  filteredProjects,
+};

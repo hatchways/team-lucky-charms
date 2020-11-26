@@ -129,7 +129,7 @@ const SignupLoginForm = ({
       });
       const data = await res.json();
       if (!data.errors) {
-        connectClient();
+        connectClient(); // to connect socket when user logs in
         dispatch({ type: LOGIN_SUCCESS, payload: data.user });
         history.push(`/users/${data.user._id}`);
       }
@@ -155,7 +155,7 @@ const SignupLoginForm = ({
       });
       const data = await res.json();
       if (!data.errors) {
-        connectClient();
+        connectClient(); // to connect socket on sign up
         dispatch({ type: SIGNUP_SUCCESS, payload: data.user });
         history.push(`/users/${data.user._id}`);
       }
