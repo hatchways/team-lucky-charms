@@ -12,19 +12,31 @@ const io = socketio();
 const socketApi = {};
 socketApi.io = io;
 
-//To keep track of connected users
+//To keep track of connected users. Map stores <userId:Set[sockets]>
 const userSocketIdMap = new Map();
 
-//Function to add connected user to map
+/*
+This method checks if user already exists in the map.
+If yes, it adds the socket to the Set of sockets.
+If no, it adds the user to the map and creates a new Set with socketId.
+*/
 function addUser(userId, socketId) {
-  userSocketIdMap.set(userId, socketId);
-  console.log(userSocketIdMap);
+  if (!userSocketIdMap.has(userId)) {
+    userSocketIdMap.set(userId, new Set([socketId]));
+  } else {
+    userSocketIdMap.get(userId).add(socketId);
+  }
 }
 
-//Function to remove socketId when user disconnects.
+/* This function removes socketId from userId's Set of sockets.
+Then checks if user has any more sockets,
+if yes, do nothing
+else, delete the user form the map*/
 function removeUser(userId, socketId) {
-  userSocketIdMap.delete(userId);
-  console.log(userSocketIdMap);
+  userSocketIdMap.get(userId).delete(socketId);
+  if (userSocketIdMap.get(userId).size === 0) {
+    userSocketIdMap.delete(userId);
+  }
 }
 
 // User verification - recieves jwt token from client as Cookie
@@ -66,24 +78,15 @@ socketAuth(io, {
     }
   },
   postAuthenticate: (socket) => {
-    console.log(`Socket ${socket.id} authenticated and Connected`);
-
-    // To add user to map
-    if (!userSocketIdMap.has(socket.user)) {
-      addUser(socket.user, socket.id);
-    } else {
-      socket.disconnect(true);
-      console.log('User already connected');
-    }
-
+    // Add user to map
+    addUser(socket.user, socket.id);
     io.emit('welcome', {
       message: `Hello, your socket ID is ${socket.id}`,
     });
   },
   disconnect: (socket) => {
-    //To remove user from map
+    //Remove user from map
     removeUser(socket.user, socket.id);
-    console.log(`socket ${socket.id} disconnected.`);
   },
   timeout: 1000,
 });

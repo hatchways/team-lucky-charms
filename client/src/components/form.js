@@ -155,6 +155,7 @@ const SignupLoginForm = ({
       });
       const data = await res.json();
       if (!data.errors) {
+        connectClient();
         dispatch({ type: SIGNUP_SUCCESS, payload: data.user });
         history.push(`/users/${data.user._id}`);
       }
