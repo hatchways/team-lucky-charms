@@ -18,6 +18,9 @@ import TextBubble from './TextBubble';
 //assets
 import avatar from '../assets/images/user.png';
 
+//socket
+import { sendMessage } from '../socketio-client';
+
 const useStyles = makeStyles((theme) => ({
   avatar: {
     margin: theme.spacing(3, 3, 1, 3),
@@ -204,7 +207,13 @@ const IndividualProject = ({ project }) => {
                 {location}
               </Typography>
               <Box className={classes.buttons}>
-                <Button outlined className={classes.button}>
+                <Button
+                  outlined
+                  className={classes.button}
+                  onClick={() => {
+                    sendMessage();
+                  }}
+                >
                   Send Message
                 </Button>
                 <Button className={classes.button}>Fund This Project</Button>

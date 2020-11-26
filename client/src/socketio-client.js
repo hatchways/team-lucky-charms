@@ -1,6 +1,8 @@
 import io from 'socket.io-client';
 
-const socket = io('/', { autoConnect: false });
+const socket = io('/', {
+  autoConnect: false,
+});
 
 export function connectClient() {
   socket.on('connect', () => {
@@ -8,6 +10,10 @@ export function connectClient() {
     socket.emit('authentication');
     socket.on('welcome', (data) => {
       console.log(data.message);
+    });
+
+    socket.on('receive-message', (message) => {
+      console.log(message);
     });
   });
 
@@ -26,4 +32,11 @@ export function connectClient() {
 
 export function disconnectClient() {
   socket.disconnect();
+}
+
+export function sendMessage() {
+  socket.emit('send-message', {
+    receiver: '5fbe7d48908987bcf050d089',
+    message: 'Hello 89!!!',
+  });
 }

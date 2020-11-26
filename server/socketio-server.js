@@ -23,8 +23,10 @@ If no, it adds the user to the map and creates a new Set with socketId.
 function addUser(userId, socketId) {
   if (!userSocketIdMap.has(userId)) {
     userSocketIdMap.set(userId, new Set([socketId]));
+    console.debug(userSocketIdMap);
   } else {
     userSocketIdMap.get(userId).add(socketId);
+    console.debug(userSocketIdMap);
   }
 }
 
@@ -36,14 +38,22 @@ function removeUser(userId, socketId) {
   userSocketIdMap.get(userId).delete(socketId);
   if (userSocketIdMap.get(userId).size === 0) {
     userSocketIdMap.delete(userId);
+    console.debug(userSocketIdMap);
   }
+}
+
+function getReceiverSockets(receiverUserId) {
+  if (!userSocketIdMap.has(receiverUserId)) {
+    return;
+  }
+  return userSocketIdMap.get(receiverUserId);
 }
 
 // User verification - recieves jwt token from client as Cookie
 async function verifyUser(token) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (token === '') {
+      if (!token) {
         return reject('User Not Found!');
       }
 
@@ -83,7 +93,21 @@ socketAuth(io, {
     io.emit('welcome', {
       message: `Hello, your socket ID is ${socket.id}`,
     });
+
+    socket.on('send-message', (data) => {
+      console.debug('Server received message');
+      const sockets = getReceiverSockets(data.receiver);
+      if (!sockets) {
+        console.debug('User offline. Message saved.');
+      } else {
+        sockets.forEach((socketId) => {
+          console.debug('Emitting message to receiver');
+          socket.to(socketId).emit('receive-message', data.message);
+        });
+      }
+    });
   },
+
   disconnect: (socket) => {
     //Remove user from map
     removeUser(socket.user, socket.id);
