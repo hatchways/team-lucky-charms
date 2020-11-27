@@ -10,6 +10,7 @@ import {
   Avatar,
 } from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
+import CountUp from 'react-countup';
 
 //components
 import Button from '../components/Button';
@@ -17,6 +18,7 @@ import TextBubble from './TextBubble';
 
 //assets
 import avatar from '../assets/images/user.png';
+import FundingPayment from './Funding/Payments';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -115,9 +117,24 @@ const IndividualProject = ({ project }) => {
     industry,
     location,
     owner,
+    _id,
   } = project;
 
   const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const totalFunds = investors
+    .map((a) => a.amountFunded)
+    .reduce(((acc, amountFunded) => acc + amountFunded), 0);
+
   return (
     <Container className={classes.root}>
       <div className={classes.heading}>
@@ -162,7 +179,16 @@ const IndividualProject = ({ project }) => {
           <Paper className={classes.container}>
             <Box className={classes.funding}>
               <Typography variant="h1" className={classes.numbers}>
-                $ 23,476
+                {totalFunds ? (
+                  <CountUp
+                    start={0}
+                    end={totalFunds / 100}
+                    duration={1}
+                    separator=","
+                  />
+                ) : (
+                  0
+                )}
               </Typography>
               <Typography variant="subtitle2" className={classes.numbers}>
                 / {fundingGoal}
@@ -207,12 +233,15 @@ const IndividualProject = ({ project }) => {
                 <Button outlined className={classes.button}>
                   Send Message
                 </Button>
-                <Button className={classes.button}>Fund This Project</Button>
+                <Button className={classes.button} onClick={handleClickOpen}>
+                  Fund This Project
+                </Button>
               </Box>
             </Box>
           </Paper>
         </Grid>
       </Grid>
+      <FundingPayment open={open} onClose={handleClose} id={_id} />
     </Container>
   );
 };
