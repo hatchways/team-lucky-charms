@@ -10,6 +10,7 @@ import {
   Avatar,
 } from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
+import CountUp from 'react-countup';
 
 //components
 import Button from '../components/Button';
@@ -178,7 +179,16 @@ const IndividualProject = ({ project }) => {
           <Paper className={classes.container}>
             <Box className={classes.funding}>
               <Typography variant="h1" className={classes.numbers}>
-                {totalFunds? totalFunds/100 : 0}
+                {totalFunds ? (
+                  <CountUp
+                    start={0}
+                    end={totalFunds / 100}
+                    duration={1}
+                    separator=","
+                  />
+                ) : (
+                  0
+                )}
               </Typography>
               <Typography variant="subtitle2" className={classes.numbers}>
                 / {fundingGoal}
@@ -223,7 +233,9 @@ const IndividualProject = ({ project }) => {
                 <Button outlined className={classes.button}>
                   Send Message
                 </Button>
-                <Button className={classes.button} onClick={handleClickOpen} >Fund This Project</Button>
+                <Button className={classes.button} onClick={handleClickOpen}>
+                  Fund This Project
+                </Button>
               </Box>
             </Box>
           </Paper>

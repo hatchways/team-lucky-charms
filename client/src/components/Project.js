@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Grid, makeStyles, Typography } from '@material-ui/core';
 import { format as d3Format } from 'd3-format';
 import { Link } from 'react-router-dom';
+import CountUp from 'react-countup';
 
 import TextBubble from './TextBubble';
 
@@ -73,7 +74,16 @@ const Project = ({ data, gridSize }) => {
             {title}
           </Typography>
           <Typography element="h3" className={classes.funding}>
-            {totalFunds ? totalFunds / 100 : 0}
+            {totalFunds ? (
+              <CountUp
+                start={0}
+                end={totalFunds / 100}
+                duration={1}
+                separator=","
+              />
+            ) : (
+              0
+            )}
             <span className={classes.goal}> / {format(fundingGoal)}</span>
           </Typography>
           <Typography element="h4" className={classes.footer}>
