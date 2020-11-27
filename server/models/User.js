@@ -40,7 +40,7 @@ const userSchema = new Schema(
           index: true,
         },
         amountFunded: { type: Number },
-      },
+      }, 
     ],
   },
   { timestamps: true },

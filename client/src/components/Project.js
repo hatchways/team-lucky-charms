@@ -49,7 +49,10 @@ const useStyles = makeStyles((theme) => ({
 const Project = ({ data, gridSize }) => {
    const format = d3Format(',');
   const classes = useStyles();
-  const { fundingGoal, images, industry, title, _id } = data;
+  const { fundingGoal, images, industry, title, _id, investors } = data;
+  const totalFunds = investors
+    .map((a) => a.amountFunded)
+    .reduce((acc, amountFunded) => acc + amountFunded, 0);
   return (
     <Grid
       item
@@ -70,7 +73,7 @@ const Project = ({ data, gridSize }) => {
             {title}
           </Typography>
           <Typography element="h3" className={classes.funding}>
-            $12,345
+            {totalFunds ? totalFunds / 100 : 0}
             <span className={classes.goal}> / {format(fundingGoal)}</span>
           </Typography>
           <Typography element="h4" className={classes.footer}>
