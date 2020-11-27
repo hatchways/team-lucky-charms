@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
 import {
   Avatar,
@@ -15,7 +15,11 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import NotificationsCenter from './NotificationsCenter';
 
 // SOCKETS
-import { disconnectClient } from '../../socketio-client';
+import {
+  disconnectClient,
+  getNewNotifications,
+  markNotificationsRead,
+} from '../../socketio-client';
 
 // CONTEXT
 import { userState } from '../../provider/UserContext';
@@ -44,6 +48,8 @@ const AuthenticatedNav = () => {
   const history = useHistory();
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [notificationsAnchorEl, setNotificationsAnchorEl] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  const [badge, setBadge] = useState(0);
   const {
     state: { user },
     dispatch,
@@ -57,7 +63,14 @@ const AuthenticatedNav = () => {
     setNotificationsAnchorEl(event.currentTarget);
   };
 
+  const markReadSuccess = () => {
+    setBadge(0);
+  }
+
   const handleNotificationsClose = () => {
+    if (notifications.length !== 0) {
+      markNotificationsRead(notifications, markReadSuccess);
+    }
     setNotificationsAnchorEl(null);
   };
 
@@ -76,6 +89,34 @@ const AuthenticatedNav = () => {
     history.push('/login');
   };
 
+  const updateNotifications = (newNotifications) => {
+    setNotifications(prev => {
+      return [...newNotifications, ...prev];
+    });
+    if (isNaN(newNotifications.length)) {
+      setBadge(0);
+      return;
+    }
+    setBadge(prev => newNotifications.length + prev);
+  };
+
+  useEffect(() => {
+    const getNotifications = async () => {
+      try {
+        const response = await fetch(`/api/notifications/${user._id}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const userNotifications = await response.json();
+        updateNotifications(userNotifications);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getNotifications();
+    getNewNotifications(user._id, updateNotifications);
+  }, []);
+
   return (
     <div>
       <NavLink color="inherit" to="/explore" className={classes.link}>
@@ -89,13 +130,14 @@ const AuthenticatedNav = () => {
         aria-haspopup="true"
         onClick={handleNotificationsClick}
       >
-        <Badge badgeContent={3} color="error">
+        <Badge badgeContent={badge} color="error">
           <NotificationsIcon />
         </Badge>
       </Button>
       <NotificationsCenter
         handleClose={handleNotificationsClose}
         anchorEl={notificationsAnchorEl}
+        notifications={notifications}
       />
       <Button
         aria-controls="profile"

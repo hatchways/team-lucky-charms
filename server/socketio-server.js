@@ -7,6 +7,7 @@ const cookie = require('cookie');
 const jwt = require('jsonwebtoken');
 const { TOKEN_SECRET_KEY } = require('./config');
 const User = require('./models/User');
+const Notification = require('./models/Notification');
 
 const io = socketio();
 const socketApi = {};
@@ -89,6 +90,31 @@ socketAuth(io, {
     removeUser(socket.user, socket.id);
   },
   timeout: 1000,
+});
+
+io.on('connect', (socket) => {
+  socket.on('get update', async (id) => {
+    try {
+      const notifications = await Notification.find({
+        recipient: id,
+        read: false,
+      });
+      socket.emit('send updates', notifications);
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  socket.on('mark read', (notifications) => {
+    notifications.forEach(async (notification) => {
+      try {
+        await Notification.updateOne({ _id: notification._id }, { read: true });
+        socket.emit('mark read success');
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  });
 });
 
 module.exports = socketApi;
