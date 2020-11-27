@@ -9,8 +9,35 @@ const { TOKEN_SECRET_KEY } = require('./config');
 const User = require('./models/User');
 
 const io = socketio();
-var socketApi = {};
+const socketApi = {};
 socketApi.io = io;
+
+//To keep track of connected users. Map stores <userId:Set[sockets]>
+const userSocketIdMap = new Map();
+
+/*
+This method checks if user already exists in the map.
+If yes, it adds the socket to the Set of sockets.
+If no, it adds the user to the map and creates a new Set with socketId.
+*/
+function addUser(userId, socketId) {
+  if (!userSocketIdMap.has(userId)) {
+    userSocketIdMap.set(userId, new Set([socketId]));
+  } else {
+    userSocketIdMap.get(userId).add(socketId);
+  }
+}
+
+/* This function removes socketId from userId's Set of sockets.
+Then checks if user has any more sockets,
+if yes, do nothing
+else, delete the user form the map*/
+function removeUser(userId, socketId) {
+  userSocketIdMap.get(userId).delete(socketId);
+  if (userSocketIdMap.get(userId).size === 0) {
+    userSocketIdMap.delete(userId);
+  }
+}
 
 // User verification - recieves jwt token from client as Cookie
 async function verifyUser(token) {
@@ -46,19 +73,22 @@ socketAuth(io, {
       socket.user = userID;
       return callback(null, true);
     } catch (error) {
-      console.log(`Socket ${socket.id} unauthorized.`);
+      console.log(`Socket ${socket.id} unauthorized.`, error);
       return callback({ message: 'Unauthorized user!' });
     }
   },
   postAuthenticate: (socket) => {
-    console.log(`Socket ${socket.id} authenticated and Connected`);
+    // Add user to map
+    addUser(socket.user, socket.id);
     io.emit('welcome', {
       message: `Hello, your socket ID is ${socket.id}`,
     });
   },
   disconnect: (socket) => {
-    console.log(`socket ${socket.id} disconnected.`);
+    //Remove user from map
+    removeUser(socket.user, socket.id);
   },
+  timeout: 1000,
 });
 
 module.exports = socketApi;
