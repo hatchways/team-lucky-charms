@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Grid, makeStyles, Typography } from '@material-ui/core';
 import { format as d3Format } from 'd3-format';
+import { Link } from 'react-router-dom';
 
 import TextBubble from './TextBubble';
 
@@ -39,14 +40,24 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '22px',
     fontWeight: '600',
   },
+  link: {
+    textDecoration: 'none',
+    color: 'rgba(0, 0, 0, 0.87)',
+  },
 }));
 
 const Project = ({ data, gridSize }) => {
    const format = d3Format(',');
   const classes = useStyles();
-  const { fundingGoal, images, industry, title } = data;
+  const { fundingGoal, images, industry, title, _id } = data;
   return (
-    <Grid item xs={gridSize}>
+    <Grid
+      item
+      xs={gridSize}
+      className={classes.link}
+      component={Link}
+      to={`/project/${_id}`}
+    >
       <Box className={classes.container}>
         <div
           style={{ backgroundImage: `url(${images[0]})` }}
