@@ -4,20 +4,30 @@ import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
+// THEME
 import { theme } from './themes/theme';
-import './App.css';
+
+// PAGES
 import Explore from './pages/Explore';
-import Navbar from './components/Navbar/Navbar';
 import Launch from './pages/Launch';
 import Profile from './pages/Profile';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import ProjectDetails from './pages/ProjectDetails';
+
+// ROUTES
 import ProtectedRoutes from './routes/ProtectedRoutes';
-import { userState } from './provider/UserContext';
-import { LOADING_USER, UNAUTH_USER } from './provider/constants';
+
+// COMPONENTS
+import Navbar from './components/Navbar/Navbar';
 import Loader from './components/Loader';
 import FundingPayment from './components/Funding/Payments';
+
+// CONTEXT
+import { userState } from './provider/UserContext';
+import { LOADING_USER, UNAUTH_USER } from './provider/constants';
+
+// SOCKETS
 import { connectClient } from './socketio-client';
 
 function App() {
@@ -61,6 +71,7 @@ function App() {
               <Route path="/signup" exact component={SignUp} />
               <Route path="/users/:userId" component={Profile} />
               <Route path="/project/:projectId" component={ProjectDetails} />
+              <Route path="/edit-project/:projectId" component={Launch} />
               <ProtectedRoutes path="/launch" exact component={Launch} />
               {/* need suggestion for this route name be payments or funds */}
               <ProtectedRoutes
