@@ -92,14 +92,15 @@ socketAuth(io, {
   timeout: 1000,
 });
 
-async function emitNewNotification(userId) {
+async function emitNewNotification(mongoId) {
+  const mapId = mongoId.toString();
   try {
-    if (userSocketIdMap.has(userId)) {
+    if (userSocketIdMap.has(mapId)) {
       const notifications = await Notification.find({
-        recipient: userId,
+        recipient: mongoId,
         read: false,
       });
-      userSocketIdMap.get(userId).forEach((socket) => {
+      userSocketIdMap.get(mapId).forEach((socket) => {
         io.to(socket).emit('new notifications', notifications);
       });
     }
