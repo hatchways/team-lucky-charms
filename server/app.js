@@ -14,6 +14,7 @@ const fundingRoutes = require('./routes/fundingRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const imageUploadRoutes = require('./routes/imageUploadRoutes');
 const userRoutes = require('./routes/userRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const { json, urlencoded } = express;
 
@@ -30,6 +31,7 @@ app.use('/api/projects/', projectRoutes);
 app.use('/api/projects/', imageUploadRoutes);
 app.use(fundingRoutes);
 app.use('/api/users/', userRoutes);
+app.use('/api/notifications/', notificationRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
