@@ -32,6 +32,16 @@ const userSchema = new Schema(
     projects: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'Project', index: true },
     ], //array of project id's for this user
+    invested_in: [
+      {
+        projectId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Project',
+          index: true,
+        },
+        amountFunded: { type: Number },
+      }, 
+    ],
   },
   { timestamps: true },
 );

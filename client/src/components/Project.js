@@ -1,6 +1,8 @@
 import React from 'react';
 import { Box, Grid, makeStyles, Typography } from '@material-ui/core';
 import { format as d3Format } from 'd3-format';
+import { Link } from 'react-router-dom';
+import CountUp from 'react-countup';
 
 import TextBubble from './TextBubble';
 
@@ -39,14 +41,27 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '22px',
     fontWeight: '600',
   },
+  link: {
+    textDecoration: 'none',
+    color: 'rgba(0, 0, 0, 0.87)',
+  },
 }));
 
 const Project = ({ data, gridSize }) => {
    const format = d3Format(',');
   const classes = useStyles();
-  const { fundingGoal, images, industry, title } = data;
+  const { fundingGoal, images, industry, title, _id, investors } = data;
+  const totalFunds = investors
+    .map((a) => a.amountFunded)
+    .reduce((acc, amountFunded) => acc + amountFunded, 0);
   return (
-    <Grid item xs={gridSize}>
+    <Grid
+      item
+      xs={gridSize}
+      className={classes.link}
+      component={Link}
+      to={`/project/${_id}`}
+    >
       <Box className={classes.container}>
         <div
           style={{ backgroundImage: `url(${images[0]})` }}
@@ -59,7 +74,16 @@ const Project = ({ data, gridSize }) => {
             {title}
           </Typography>
           <Typography element="h3" className={classes.funding}>
-            $12,345
+            {totalFunds ? (
+              <CountUp
+                start={0}
+                end={totalFunds / 100}
+                duration={1}
+                separator=","
+              />
+            ) : (
+              0
+            )}
             <span className={classes.goal}> / {format(fundingGoal)}</span>
           </Typography>
           <Typography element="h4" className={classes.footer}>

@@ -13,7 +13,14 @@ const projectsSchema = new mongoose.Schema(
     isLive: { type: Boolean, default: false },
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
     investors: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
+      {
+        investorId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User',
+          index: true,
+        },
+        amountFunded: { type: Number },
+      },
     ],
   },
   { timestamps: true },
