@@ -4,6 +4,9 @@ import { format as d3Format } from 'd3-format';
 
 import TextBubble from './TextBubble';
 
+// REACT ROUTER
+import { useHistory } from 'react-router-dom';
+
 const useStyles = makeStyles((theme) => ({
   container: {
     backgroundColor: '#fff',
@@ -42,11 +45,21 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Project = ({ data, gridSize }) => {
-   const format = d3Format(',');
+  const format = d3Format(',');
   const classes = useStyles();
+  const history = useHistory();
+
   const { fundingGoal, images, industry, title } = data;
   return (
-    <Grid item xs={gridSize}>
+    <Grid
+      item
+      xs={gridSize}
+      onClick={() => {
+        history.push({
+          pathname: `/project/${data._id}`,
+        });
+      }}
+    >
       <Box className={classes.container}>
         <div
           style={{ backgroundImage: `url(${images[0]})` }}

@@ -11,10 +11,6 @@ export function connectClient() {
     socket.on('welcome', (data) => {
       console.log(data.message);
     });
-
-    socket.on('receive-message', (message) => {
-      console.log(message);
-    });
   });
 
   socket.on('unauthorized', (reason) => {
@@ -34,9 +30,16 @@ export function disconnectClient() {
   socket.disconnect();
 }
 
-export function sendMessage() {
+export function sendMessage(senderId, receiverId, message) {
   socket.emit('send-message', {
-    receiver: '5fbe7d48908987bcf050d089',
-    message: 'Hello 89!!!',
+    senderId,
+    receiverId,
+    message,
+  });
+}
+
+export function setInbound(onMessageReceived) {
+  socket.on('receive-message', (message) => {
+    onMessageReceived(message);
   });
 }

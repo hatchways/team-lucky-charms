@@ -8,6 +8,9 @@ const jwt = require('jsonwebtoken');
 const { TOKEN_SECRET_KEY } = require('./config');
 const User = require('./models/User');
 
+// for databse update
+const { updateConversation } = require('./controllers/conversationController');
+
 const io = socketio();
 const socketApi = {};
 socketApi.io = io;
@@ -94,15 +97,23 @@ socketAuth(io, {
       message: `Hello, your socket ID is ${socket.id}`,
     });
 
-    socket.on('send-message', (data) => {
-      console.debug('Server received message');
-      const sockets = getReceiverSockets(data.receiver);
+    socket.on('send-message', async (data) => {
+      // save messages to mongo -> in users conversation
+      const newMessage = await updateConversation(
+        data.senderId,
+        data.receiverId,
+        data.message,
+      );
+      const sockets = getReceiverSockets(data.receiverId);
+      console.log('SOCKETS', sockets);
       if (!sockets) {
+        // user offline - notification
         console.debug('User offline. Message saved.');
       } else {
+        // user online - no notification
         sockets.forEach((socketId) => {
           console.debug('Emitting message to receiver');
-          socket.to(socketId).emit('receive-message', data.message);
+          socket.to(socketId).emit('receive-message', newMessage);
         });
       }
     });

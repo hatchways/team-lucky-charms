@@ -12,6 +12,7 @@ import Launch from './pages/Launch';
 import Profile from './pages/Profile';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
+import Messages from './pages/Messaging/Messages';
 import ProjectDetails from './pages/ProjectDetails';
 import ProtectedRoutes from './routes/ProtectedRoutes';
 import { userState } from './provider/UserContext';
@@ -61,7 +62,8 @@ function App() {
               <Route path="/signup" exact component={SignUp} />
               <Route path="/users/:userId" component={Profile} />
               <Route path="/project/:projectId" component={ProjectDetails} />
-              <ProtectedRoutes path="/launch" exact component={Launch} />
+              <ProtectedRoutes path="/messages" component={Messages} />
+              <ProtectedRoutes exact path="/launch" component={Launch} />
               {/* need suggestion for this route name be payments or funds */}
               <ProtectedRoutes
                 path="/payments"

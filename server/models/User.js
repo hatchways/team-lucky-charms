@@ -32,6 +32,13 @@ const userSchema = new Schema(
     projects: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'Project', index: true },
     ], //array of project id's for this user
+    conversations: [
+      {
+        type: mongoose.Schema.Types.String,
+        ref: 'Conversation',
+        index: true,
+      },
+    ], // array of conversation ID's for this user
   },
   { timestamps: true },
 );

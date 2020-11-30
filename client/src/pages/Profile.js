@@ -153,7 +153,11 @@ const Profile = () => {
         <h1>Loading...</h1>
       ) : (
         <>
-          <Sidebar isOwnProfile={isOwnProfile} user={currentUser} />
+          <Sidebar
+            isOwnProfile={isOwnProfile}
+            user={currentUser}
+            loggedInUser={authUser}
+          />
           <Box className={classes.main}>
             <Typography
               element="h1"
