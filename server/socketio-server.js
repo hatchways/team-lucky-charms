@@ -92,19 +92,23 @@ socketAuth(io, {
   timeout: 1000,
 });
 
-io.on('connect', (socket) => {
-  socket.on('get update', async (id) => {
-    try {
+async function emitNewNotification(userId) {
+  try {
+    if (userSocketIdMap.has(userId)) {
       const notifications = await Notification.find({
-        recipient: id,
+        recipient: userId,
         read: false,
       });
-      socket.emit('send updates', notifications);
-    } catch (error) {
-      console.log(error);
+      userSocketIdMap.get(userId).forEach((socket) => {
+        io.to(socket).emit('new notifications', notifications);
+      });
     }
-  });
+  } catch (error) {
+    console.log(error);
+  }
+}
 
+io.on('connection', (socket) => {
   socket.on('mark read', (notifications) => {
     notifications.forEach(async (notification) => {
       try {
@@ -117,4 +121,4 @@ io.on('connect', (socket) => {
   });
 });
 
-module.exports = socketApi;
+module.exports = { socketApi, emitNewNotification };

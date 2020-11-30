@@ -6,22 +6,13 @@ export function markNotificationsRead(notifications, markReadSuccess) {
   socket.emit('mark read', notifications);
   socket.on('mark read success', () => {
     markReadSuccess();
-  })
+  });
 }
 
-export function getNewNotifications(userId, updateNotifications) {
-  let recipient;
-  socket.on('new notification', (recipientId) => {
-    recipient = recipientId;
-    if (userId === recipientId) {
-      socket.emit('get update', userId);
-    }
+export function getNewNotifications(updateNotifications) {
+  socket.on('new notifications', (data) => {
+    updateNotifications(data);
   });
-  socket.on('send updates', (data) => {
-    if (userId === recipient) {
-      updateNotifications(data);
-    }
-  })
 }
 
 export function connectClient() {

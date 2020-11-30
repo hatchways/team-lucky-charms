@@ -90,14 +90,12 @@ const AuthenticatedNav = () => {
   };
 
   const updateNotifications = (newNotifications) => {
-    setNotifications(prev => {
-      return [...newNotifications, ...prev];
-    });
+    setNotifications(newNotifications);
     if (isNaN(newNotifications.length)) {
       setBadge(0);
       return;
     }
-    setBadge(prev => newNotifications.length + prev);
+    setBadge(newNotifications.length);
   };
 
   useEffect(() => {
@@ -113,8 +111,11 @@ const AuthenticatedNav = () => {
         console.log(error);
       }
     };
+    // get notifications from when not logged in
     getNotifications();
-    getNewNotifications(user._id, updateNotifications);
+    // using sockets to get live notification updates
+    getNewNotifications(updateNotifications);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
