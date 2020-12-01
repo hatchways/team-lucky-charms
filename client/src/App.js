@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
 import ProjectDetails from './pages/ProjectDetails';
+import EditProject from './pages/EditProject';
 
 // ROUTES
 import ProtectedRoutes from './routes/ProtectedRoutes';
@@ -71,7 +72,7 @@ function App() {
               <Route path="/signup" exact component={SignUp} />
               <Route path="/users/:userId" component={Profile} />
               <Route path="/project/:projectId" component={ProjectDetails} />
-              <Route path="/edit-project/:projectId" component={Launch} />
+              <Route path="/edit-project/:projectId" component={EditProject} />
               <ProtectedRoutes path="/launch" exact component={Launch} />
               {/* need suggestion for this route name be payments or funds */}
               <ProtectedRoutes
