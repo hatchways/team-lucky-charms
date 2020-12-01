@@ -2,15 +2,15 @@ const Project = require('../models/projects');
 const User = require('../models/User');
 
 async function getProject(req, res) {
-  const project = await Project.findOne({ _id: req.params.projectId }).populate(
-    'owner',
-    'name',
-  );
-
-  if (!project) {
+  try {
+    const project = await Project.findOne({ _id: req.params.projectId });
+    if (!project) {
+      return res.status(400);
+    }
+    return res.send(project);
+  } catch (error) {
     return res.status(400);
   }
-  res.send(project);
 }
 
 async function getAllProjects(req, res) {
@@ -88,10 +88,31 @@ async function createProjectForUser(req, res) {
   }
 }
 
+async function updateProject(req, res) {
+  const { projectId } = req.params;
+  const userId = req.id;
+
+  try {
+    if (req.body.owner !== userId) {
+      return res.status(403).json({ errors: { message: 'Not authorized' } });
+    }
+
+    const updates = { ...req.body };
+    const updatedProject = await Project.findByIdAndUpdate(projectId, updates, {
+      new: true,
+      useFindAndModify: false,
+    });
+    return res.status(200).json(updatedProject);
+  } catch (error) {
+    return res.status(500);
+  }
+}
+
 module.exports = {
+  createProjectForUser,
+  filteredProjects,
   getAllProjects,
   getProjectsForUser,
-  createProjectForUser,
   getProject,
-  filteredProjects,
+  updateProject
 };
