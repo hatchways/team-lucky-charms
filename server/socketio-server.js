@@ -8,13 +8,12 @@ const jwt = require('jsonwebtoken');
 const { TOKEN_SECRET_KEY } = require('./config');
 const User = require('./models/User');
 
-// for databse update
+// for updating a conversation on new message
 const { updateConversation } = require('./controllers/conversationController');
 
 const io = socketio();
 const socketApi = {};
 socketApi.io = io;
-//socketApi.handleNewConversation = handleNewConversation;
 
 //To keep track of connected users. Map stores <userId:Set[sockets]>
 const userSocketIdMap = new Map();
@@ -27,10 +26,10 @@ If no, it adds the user to the map and creates a new Set with socketId.
 function addUser(userId, socketId) {
   if (!userSocketIdMap.has(userId)) {
     userSocketIdMap.set(userId, new Set([socketId]));
-    console.debug(userSocketIdMap);
+    console.debug('New User', userSocketIdMap);
   } else {
     userSocketIdMap.get(userId).add(socketId);
-    console.debug(userSocketIdMap);
+    console.debug('User already exists', userSocketIdMap);
   }
 }
 
@@ -57,6 +56,7 @@ function getReceiverSockets(receiverUserId) {
   return userSocketIdMap.get(receiverUserId);
 }
 
+// socket listener to handle new messages
 async function handleMessages(socket) {
   socket.removeAllListeners('send-message');
 
@@ -70,10 +70,8 @@ async function handleMessages(socket) {
 
     const sockets = getReceiverSockets(data.receiverId);
     if (!sockets) {
-      // user offline - notification
       console.debug('User offline. Message saved.');
     } else {
-      // user online - no notification
       sockets.forEach((socketId) => {
         console.debug('Emitting message to receiver');
         socket.to(socketId).emit('receive-message', newMessage);
@@ -82,6 +80,7 @@ async function handleMessages(socket) {
   });
 }
 
+// socket listener to handle new conversation
 function handleNewConversation(socket) {
   socket.removeAllListeners('new-conversation');
   socket.on('new-conversation', (receiverId) => {
@@ -123,6 +122,8 @@ async function verifyUser(token) {
     }, 200);
   });
 }
+
+// socket auth - for user authentication
 socketAuth(io, {
   authenticate: async (socket, data, callback) => {
     const { jwt } = cookie.parse(socket.request.headers.cookie || '');
@@ -147,7 +148,6 @@ socketAuth(io, {
   disconnect: (socket) => {
     //Remove user from map
     removeUser(socket.user, socket.id);
-
     socket.disconnect(true);
   },
   timeout: 1000,

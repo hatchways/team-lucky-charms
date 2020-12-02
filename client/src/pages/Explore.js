@@ -15,6 +15,7 @@ import axios from 'axios';
 import useDebouncer from './../utils/hooks';
 import Project from '../components/Project';
 import { userState } from './../provider/UserContext';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -38,6 +39,7 @@ const Explore = () => {
   const {
     state: { user },
   } = useContext(userState);
+  const history = useHistory();
   const id = user ? user._id : '';
   const [projects, setProjects] = useState([]);
   const [totalResults, setTotalResults] = useState(0);
@@ -50,7 +52,7 @@ const Explore = () => {
     page: 1,
   });
   const classes = useStyles();
- 
+
   const handleNext = () => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -71,7 +73,14 @@ const Explore = () => {
       [key]: value,
     }));
   };
-  
+
+  // redirect to individual project page
+  const handleProjectClick = (projectId) => {
+    history.push({
+      pathname: `/project/${projectId}`,
+    });
+  };
+
   const getProjects = useDebouncer(async (filter) => {
     const result = await axios.post('/api/projects/filteredProjects', filter);
     const projects = result.data.projects;
@@ -147,7 +156,9 @@ const Explore = () => {
       <Grid container spacing={3} className={classes.projects}>
         {projects.length > 0 ? (
           projects.map((project) => (
-            <Project key={project._id} data={project} gridSize={4} />
+            <span onClick={() => handleProjectClick(project.id)}>
+              <Project key={project._id} data={project} gridSize={4} />
+            </span>
           ))
         ) : (
           <Typography>No Projects to show</Typography>
@@ -171,7 +182,11 @@ const Explore = () => {
               type="submit"
               variant="contained"
               color="primary"
-              disabled={totalResults === 0 || totalResults < filters.pagination ? true : false}
+              disabled={
+                totalResults === 0 || totalResults < filters.pagination
+                  ? true
+                  : false
+              }
               onClick={handleNext}
             >
               Next

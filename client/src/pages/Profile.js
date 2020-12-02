@@ -97,7 +97,7 @@ const Profile = () => {
 
   const getProjects = async () => {
     try {
-      const response = await fetch(`/api/projects/${userId}/projects`);
+      const response = await fetch(`/api/projects/all/${userId}/`);
       const projects = await response.json();
       setProjects(projects);
     } catch (error) {
@@ -131,6 +131,11 @@ const Profile = () => {
       setIsOwnProfile(false);
       getUser();
     }
+  };
+
+  // Redirect to edit project page
+  const handleProjectClick = () => {
+    console.log('Clicked Project. Redirect to Edit Profile.');
   };
 
   useEffect(() => {
@@ -169,7 +174,9 @@ const Profile = () => {
             <Grid container spacing={3} className={classes.projects}>
               {projects.length > 0 ? (
                 projects.map((project) => (
-                  <Project key={project._id} data={project} gridSize={6} />
+                  <span onClick={() => handleProjectClick()}>
+                    <Project key={project._id} data={project} />
+                  </span>
                 ))
               ) : (
                 <h1>No projects created yet</h1>

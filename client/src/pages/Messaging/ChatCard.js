@@ -1,7 +1,6 @@
 import React from 'react';
 
 import dayjs from 'dayjs';
-import { format } from 'date-fns';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Avatar, Box, makeStyles, Paper, Typography } from '@material-ui/core';
 
