@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Avatar,
@@ -7,6 +7,7 @@ import {
   Paper,
   Divider,
   InputBase,
+  Button as CopyButton,
 } from '@material-ui/core';
 
 import Button from '../../components/Button';
@@ -59,6 +60,29 @@ const useStyles = makeStyles((theme) => ({
 const ChatWindow = ({ chat, submitMessage, currentUser }) => {
   const [message, setMessage] = useState(''); //message that the user types
 
+  // copy to clipboard
+  const textArea = useRef(null);
+
+  const copyToClipBoard = (e) => {
+    textArea.current.select();
+    document.execCommand('copy');
+    e.target.focus();
+  };
+
+  // to scroll down to the latest message
+  const messagesEndRef = useRef(null);
+  const scrollToBottom = () => {
+    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(scrollToBottom, [chat.messages]);
+
+  // send message on press enter
+  const handleKeyPress = () => {
+    submitMessage(chat.receiverId, message);
+    setMessage('');
+  };
+
   const classes = useStyles();
   return (
     <Paper className={classes.chatPane}>
@@ -78,18 +102,25 @@ const ChatWindow = ({ chat, submitMessage, currentUser }) => {
             bubbleType={message.sender === currentUser ? 'sender' : 'receiver'}
           />
         ))}
+        <div ref={messagesEndRef} />
       </Box>
       <Divider />
       <Box className={classes.typeArea}>
         <InputBase
+          inputRef={textArea}
           placeholder="Type your message"
           className={classes.textInput}
           value={message}
           onChange={(e) => {
             setMessage(e.target.value);
           }}
+          onKeyPress={(event) =>
+            event.key === 'Enter' ? handleKeyPress() : null
+          }
         />
-        <FileCopyOutlinedIcon className={classes.copyIcon} />
+        <CopyButton onClick={(e) => copyToClipBoard(e)}>
+          <FileCopyOutlinedIcon className={classes.copyIcon} />
+        </CopyButton>
         <Button
           onClick={() => {
             setMessage('');

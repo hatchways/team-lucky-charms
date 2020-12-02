@@ -79,28 +79,31 @@ const Messages = () => {
         });
         const conversationsList = await response.json();
         const conversationsMap = transformConversations(conversationsList);
-
+        console.log('after fetch', conversationsMap);
         setConversations(conversationsMap);
       } catch (error) {
         console.log(error);
       }
     };
     loadUserConversations();
-  }, [user._id]);
+  }, []);
 
   const updateConversation = (conversationKey, newMessage) => {
     // push the new message in user conversation
+
+    console.log('in update conversation', conversations);
     if (conversations) {
       const updatedConversation = conversations.updateIn(
         [conversationKey, 'messages'],
         (messages) => [...messages, newMessage],
       );
-
+      console.log('Updated', updatedConversation);
       setConversations(updatedConversation);
     }
   };
 
   const submitMessage = (receiverId, message) => {
+    console.log('Receiver id', receiverId);
     sendMessage(user._id, receiverId, message); // sends message through socketio
 
     const newMessage = {
@@ -112,13 +115,15 @@ const Messages = () => {
     updateConversation(receiverId, newMessage);
   };
 
-  const onMessageReceived = (newMessage) => {
-    updateConversation(newMessage.sender, newMessage);
-  };
-
   useEffect(() => {
+    const onMessageReceived = (newMessage) => {
+      console.log('New Message', newMessage);
+
+      updateConversation(newMessage.sender, newMessage);
+    };
+
     setInbound(onMessageReceived); // keeps listening for incoming messages
-  });
+  }, []);
 
   return (
     <Paper className={classes.container}>
@@ -137,6 +142,8 @@ const Messages = () => {
                   <ChatCard
                     key={conversation._id}
                     receiverName={conversation.name}
+                    avatar={conversation.avatar}
+                    createdAt={conversation.createdAt}
                     latestMessage={
                       conversation.messages[conversation.messages.length - 1]
                     }

@@ -27,7 +27,7 @@ export function connectClient() {
 }
 
 export function disconnectClient() {
-  socket.disconnect();
+  socket.disconnect(true);
 }
 
 export function sendMessage(senderId, receiverId, message) {
@@ -39,6 +39,7 @@ export function sendMessage(senderId, receiverId, message) {
 }
 
 export function setInbound(onMessageReceived) {
+  socket.removeAllListeners('receive-message');
   socket.on('receive-message', (message) => {
     onMessageReceived(message);
   });

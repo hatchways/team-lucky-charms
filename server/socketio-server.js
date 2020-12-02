@@ -38,18 +38,47 @@ Then checks if user has any more sockets,
 if yes, do nothing
 else, delete the user form the map*/
 function removeUser(userId, socketId) {
-  userSocketIdMap.get(userId).delete(socketId);
-  if (userSocketIdMap.get(userId).size === 0) {
-    userSocketIdMap.delete(userId);
-    console.debug(userSocketIdMap);
+  try {
+    userSocketIdMap.get(userId).delete(socketId);
+    if (userSocketIdMap.get(userId).size === 0) {
+      userSocketIdMap.delete(userId);
+      console.debug(userSocketIdMap);
+    }
+  } catch (error) {
+    console.log('No users online');
   }
 }
 
 function getReceiverSockets(receiverUserId) {
   if (!userSocketIdMap.has(receiverUserId)) {
-    return;
+    return null;
   }
   return userSocketIdMap.get(receiverUserId);
+}
+
+async function handleMessages(socket) {
+  socket.removeAllListeners('send-message');
+
+  socket.on('send-message', async (data) => {
+    // save messages to mongo -> in users conversation
+    const newMessage = await updateConversation(
+      data.senderId,
+      data.receiverId,
+      data.message,
+    );
+
+    const sockets = getReceiverSockets(data.receiverId);
+    if (!sockets) {
+      // user offline - notification
+      console.debug('User offline. Message saved.');
+    } else {
+      // user online - no notification
+      sockets.forEach((socketId) => {
+        console.debug('Emitting message to receiver');
+        socket.to(socketId).emit('receive-message', newMessage);
+      });
+    }
+  });
 }
 
 // User verification - recieves jwt token from client as Cookie
@@ -93,35 +122,18 @@ socketAuth(io, {
   postAuthenticate: (socket) => {
     // Add user to map
     addUser(socket.user, socket.id);
-    io.emit('welcome', {
-      message: `Hello, your socket ID is ${socket.id}`,
-    });
 
-    socket.on('send-message', async (data) => {
-      // save messages to mongo -> in users conversation
-      const newMessage = await updateConversation(
-        data.senderId,
-        data.receiverId,
-        data.message,
-      );
-      const sockets = getReceiverSockets(data.receiverId);
-      console.log('SOCKETS', sockets);
-      if (!sockets) {
-        // user offline - notification
-        console.debug('User offline. Message saved.');
-      } else {
-        // user online - no notification
-        sockets.forEach((socketId) => {
-          console.debug('Emitting message to receiver');
-          socket.to(socketId).emit('receive-message', newMessage);
-        });
-      }
-    });
+    // Handle socket messaging
+    console.log('In post auth');
+
+    handleMessages(socket);
   },
 
   disconnect: (socket) => {
     //Remove user from map
     removeUser(socket.user, socket.id);
+
+    socket.disconnect(true);
   },
   timeout: 1000,
 });

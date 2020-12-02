@@ -8,7 +8,6 @@ const useStyles = makeStyles((theme) => ({
     height: '50px',
     padding: theme.spacing(2),
     margin: theme.spacing(3),
-
     borderRadius: '15px',
     display: 'flex',
     justifyContent: 'center',
@@ -26,7 +25,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 const MessageBubble = ({ message, bubbleType }) => {
   const classes = useStyles();
-  console.log(bubbleType);
   return (
     <Paper
       className={
