@@ -7,6 +7,7 @@ const cookie = require('cookie');
 const jwt = require('jsonwebtoken');
 const { TOKEN_SECRET_KEY } = require('./config');
 const User = require('./models/User');
+const Notification = require('./models/Notification');
 
 const io = socketio();
 const socketApi = {};
@@ -91,4 +92,34 @@ socketAuth(io, {
   timeout: 1000,
 });
 
-module.exports = socketApi;
+async function emitNewNotification(mongoId) {
+  const mapId = mongoId.toString();
+  try {
+    if (userSocketIdMap.has(mapId)) {
+      const notifications = await Notification.find({
+        recipient: mongoId,
+        read: false,
+      });
+      userSocketIdMap.get(mapId).forEach((socket) => {
+        io.to(socket).emit('new notifications', notifications);
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+io.on('connection', (socket) => {
+  socket.on('mark read', (notifications) => {
+    notifications.forEach(async (notification) => {
+      try {
+        await Notification.updateOne({ _id: notification._id }, { read: true });
+        socket.emit('mark read success');
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  });
+});
+
+module.exports = { socketApi, emitNewNotification };
