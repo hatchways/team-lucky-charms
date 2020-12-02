@@ -44,3 +44,12 @@ export function setInbound(onMessageReceived) {
     onMessageReceived(message);
   });
 }
+
+export function emitNewConversation(receiverId) {
+  socket.emit('new-conversation', receiverId);
+}
+
+export function listenNewConversation(onNewConversation) {
+  socket.removeAllListeners('new-conversation');
+  socket.on('new-conversation', onNewConversation);
+}

@@ -14,6 +14,7 @@ const { updateConversation } = require('./controllers/conversationController');
 const io = socketio();
 const socketApi = {};
 socketApi.io = io;
+//socketApi.handleNewConversation = handleNewConversation;
 
 //To keep track of connected users. Map stores <userId:Set[sockets]>
 const userSocketIdMap = new Map();
@@ -81,6 +82,22 @@ async function handleMessages(socket) {
   });
 }
 
+function handleNewConversation(socket) {
+  socket.removeAllListeners('new-conversation');
+  socket.on('new-conversation', (receiverId) => {
+    const sockets = getReceiverSockets(receiverId);
+
+    if (!sockets) {
+      return;
+    } else {
+      sockets.forEach((socketId) => {
+        console.debug('Emitting new conversation listener');
+        socket.to(socketId).emit('new-conversation');
+      });
+    }
+  });
+}
+
 // User verification - recieves jwt token from client as Cookie
 async function verifyUser(token) {
   return new Promise((resolve, reject) => {
@@ -106,7 +123,6 @@ async function verifyUser(token) {
     }, 200);
   });
 }
-
 socketAuth(io, {
   authenticate: async (socket, data, callback) => {
     const { jwt } = cookie.parse(socket.request.headers.cookie || '');
@@ -124,9 +140,8 @@ socketAuth(io, {
     addUser(socket.user, socket.id);
 
     // Handle socket messaging
-    console.log('In post auth');
-
     handleMessages(socket);
+    handleNewConversation(socket);
   },
 
   disconnect: (socket) => {

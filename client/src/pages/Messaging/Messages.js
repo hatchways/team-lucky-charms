@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 
 //material ui
 import { makeStyles, Paper, Grid } from '@material-ui/core';
@@ -7,8 +7,12 @@ import { makeStyles, Paper, Grid } from '@material-ui/core';
 import ChatCard from './ChatCard';
 import ChatWindow from './ChatWindow';
 
-//socket & rrd
-import { sendMessage, setInbound } from '../../socketio-client';
+//socket
+import {
+  sendMessage,
+  setInbound,
+  listenNewConversation,
+} from '../../socketio-client';
 
 //context
 import { userState } from '../../provider/UserContext';
@@ -70,40 +74,26 @@ const Messages = () => {
     return IMap(Array.from(conversationsMap));
   };
   // load all conversations for the user
-  useEffect(() => {
-    const loadUserConversations = async () => {
-      try {
-        const response = await fetch(`/api/users/${user._id}/conversations`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        const conversationsList = await response.json();
-        const conversationsMap = transformConversations(conversationsList);
-        console.log('after fetch', conversationsMap);
-        setConversations(conversationsMap);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    loadUserConversations();
-  }, []);
-
-  const updateConversation = (conversationKey, newMessage) => {
-    // push the new message in user conversation
-
-    console.log('in update conversation', conversations);
-    if (conversations) {
-      const updatedConversation = conversations.updateIn(
-        [conversationKey, 'messages'],
-        (messages) => [...messages, newMessage],
-      );
-      console.log('Updated', updatedConversation);
-      setConversations(updatedConversation);
+  const loadUserConversations = async () => {
+    try {
+      const response = await fetch(`/api/users/${user._id}/conversations`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const conversationsList = await response.json();
+      const conversationsMap = transformConversations(conversationsList);
+      setConversations(conversationsMap);
+    } catch (error) {
+      console.log(error);
     }
   };
 
+  useEffect(() => {
+    listenNewConversation(loadUserConversations);
+    loadUserConversations();
+  }, []);
+
   const submitMessage = (receiverId, message) => {
-    console.log('Receiver id', receiverId);
     sendMessage(user._id, receiverId, message); // sends message through socketio
 
     const newMessage = {
@@ -115,15 +105,32 @@ const Messages = () => {
     updateConversation(receiverId, newMessage);
   };
 
+  const updateConversation = (conversationKey, newMessage) => {
+    // push the new message in user conversation
+
+    if (conversations) {
+      const updatedConversation = conversations.updateIn(
+        [conversationKey, 'messages'],
+        (messages) => [...messages, newMessage],
+      );
+      setConversations(updatedConversation);
+    }
+  };
+
+  const memoCallBack = useCallback(
+    (newMessage) => {
+      updateConversation(newMessage.sender, newMessage);
+    },
+    [conversations],
+  );
+
   useEffect(() => {
     const onMessageReceived = (newMessage) => {
-      console.log('New Message', newMessage);
-
-      updateConversation(newMessage.sender, newMessage);
+      memoCallBack(newMessage);
     };
 
     setInbound(onMessageReceived); // keeps listening for incoming messages
-  }, []);
+  }, [memoCallBack]);
 
   return (
     <Paper className={classes.container}>

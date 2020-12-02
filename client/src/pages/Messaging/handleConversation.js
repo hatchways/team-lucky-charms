@@ -1,3 +1,5 @@
+import { emitNewConversation } from '../../socketio-client';
+
 export const createOrLoadConversation = async (userId, receiver, payload) => {
   try {
     const response = await fetch(`/api/users/${userId}/conversations`, {
@@ -6,6 +8,7 @@ export const createOrLoadConversation = async (userId, receiver, payload) => {
       headers: { 'Content-Type': 'application/json' },
     });
     if (response.status === 201) {
+      emitNewConversation(receiver);
       console.log('Conversation created, Redirect to messages Page');
       return true;
     }
