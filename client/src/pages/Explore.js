@@ -11,6 +11,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationCityIcon from '@material-ui/icons/LocationCity';
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 import useDebouncer from './../utils/hooks';
 import Project from '../components/Project';
@@ -147,7 +148,16 @@ const Explore = () => {
       <Grid container spacing={3} className={classes.projects}>
         {projects.length > 0 ? (
           projects.map((project) => (
-            <Project key={project._id} data={project} gridSize={4} />
+            <Grid
+            key={project._id}
+            item
+            xs={4}
+            className={classes.link}
+            component={Link}
+            to={`/project/${project._id}`}
+            >
+              <Project data={project} />
+            </Grid>
           ))
         ) : (
           <Typography>No Projects to show</Typography>
