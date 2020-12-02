@@ -3,7 +3,6 @@ import {
   Box,
   Card,
   CardContent,
-  CircularProgress,
   Container,
   CssBaseline,
   Divider,
@@ -21,6 +20,7 @@ import { useHistory } from 'react-router-dom';
 
 // COMPONENTS
 import Button from '../components/Button';
+import Loader from '../components/Loader';
 
 // ASSETS
 import uploadIcon from '../assets/upload-icon.png';
@@ -206,7 +206,7 @@ const Launch = () => {
         <div className={classes.content}>
           <Modal open={isLoading} disableBackdropClick>
             <div className={classes.modal}>
-              <CircularProgress />
+              <Loader />
             </div>
           </Modal>
           <Typography component="h1" variant="h1" className={classes.header}>

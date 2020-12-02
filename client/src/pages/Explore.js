@@ -50,7 +50,7 @@ const Explore = () => {
     page: 1,
   });
   const classes = useStyles();
- 
+
   const handleNext = () => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -71,7 +71,7 @@ const Explore = () => {
       [key]: value,
     }));
   };
-  
+
   const getProjects = useDebouncer(async (filter) => {
     const result = await axios.post('/api/projects/filteredProjects', filter);
     const projects = result.data.projects;
@@ -150,7 +150,9 @@ const Explore = () => {
             <Project key={project._id} data={project} gridSize={4} />
           ))
         ) : (
-          <Typography>No Projects to show</Typography>
+          <Typography style={{ fontSize: '18px' }} variant="subtitle1">
+            No Projects to show
+          </Typography>
         )}
       </Grid>
       <Grid container justify="center">
@@ -171,7 +173,11 @@ const Explore = () => {
               type="submit"
               variant="contained"
               color="primary"
-              disabled={totalResults === 0 || totalResults < filters.pagination ? true : false}
+              disabled={
+                totalResults === 0 || totalResults < filters.pagination
+                  ? true
+                  : false
+              }
               onClick={handleNext}
             >
               Next

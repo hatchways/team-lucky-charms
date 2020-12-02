@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 // COMPONENTS
 import Project from '../components/Project';
 import Sidebar from '../components/Profile/Sidebar';
+import Loader from '../components/Loader';
 
 // CONTEXT
 import { userState } from '../provider/UserContext';
@@ -97,7 +98,7 @@ const Profile = () => {
 
   const getProjects = async () => {
     try {
-      const response = await fetch(`/api/projects/${userId}`);
+      const response = await fetch(`/api/projects/all/${userId}`);
       const projects = await response.json();
       setProjects(projects);
     } catch (error) {
@@ -149,8 +150,9 @@ const Profile = () => {
   return (
     <div className={classes.container}>
       {isLoading ? (
-        // TODO: Create nicer looking loading (placeholders, etc.)
-        <h1>Loading...</h1>
+        <div style={{ textAlign: 'center', margin: '30px 0'}}>
+          <Loader />
+        </div>
       ) : (
         <>
           <Sidebar isOwnProfile={isOwnProfile} user={currentUser} />
@@ -168,7 +170,9 @@ const Profile = () => {
                   <Project key={project._id} data={project} gridSize={6} />
                 ))
               ) : (
-                <h1>No projects created yet</h1>
+                <Typography variant="subtitle1" style={{ fontSize: '18px' }}>
+                  No projects created yet
+                </Typography>
               )}
             </Grid>
           </Box>
