@@ -13,7 +13,7 @@ var http = require('http');
 /**
  * Socket io server module
  */
-var socketServer = require('../socketio-server');
+var { socketApi: socketServer } = require('../socketio-server');
 
 /**
  * Get port from environment and store in Express.

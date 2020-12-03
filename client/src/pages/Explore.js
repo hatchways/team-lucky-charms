@@ -11,6 +11,7 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationCityIcon from '@material-ui/icons/LocationCity';
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 import useDebouncer from './../utils/hooks';
 import Project from '../components/Project';

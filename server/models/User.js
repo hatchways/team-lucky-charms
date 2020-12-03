@@ -39,6 +39,16 @@ const userSchema = new Schema(
         index: true,
       },
     ], // array of conversation ID's for this user
+    invested_in: [
+      {
+        projectId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Project',
+          index: true,
+        },
+        amountFunded: { type: Number },
+      }, 
+    ],
   },
   { timestamps: true },
 );
