@@ -11,10 +11,12 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationCityIcon from '@material-ui/icons/LocationCity';
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 import useDebouncer from './../utils/hooks';
 import Project from '../components/Project';
 import { userState } from './../provider/UserContext';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -38,6 +40,7 @@ const Explore = () => {
   const {
     state: { user },
   } = useContext(userState);
+  const history = useHistory();
   const id = user ? user._id : '';
   const [projects, setProjects] = useState([]);
   const [totalResults, setTotalResults] = useState(0);
@@ -70,6 +73,13 @@ const Explore = () => {
       ...prevFilters,
       [key]: value,
     }));
+  };
+
+  // redirect to individual project page
+  const handleProjectClick = (projectId) => {
+    history.push({
+      pathname: `/project/${projectId}`,
+    });
   };
 
   const getProjects = useDebouncer(async (filter) => {
@@ -147,12 +157,12 @@ const Explore = () => {
       <Grid container spacing={3} className={classes.projects}>
         {projects.length > 0 ? (
           projects.map((project) => (
-            <Project key={project._id} data={project} gridSize={4} />
+            <span onClick={() => handleProjectClick(project.id)}>
+              <Project key={project._id} data={project} gridSize={4} />
+            </span>
           ))
         ) : (
-          <Typography style={{ fontSize: '18px' }} variant="subtitle1">
-            No Projects to show
-          </Typography>
+          <Typography>No Projects to show</Typography>
         )}
       </Grid>
       <Grid container justify="center">

@@ -10,6 +10,12 @@ import EditProfileModal from './EditProfileModal';
 import Button from '../Button';
 import TextBubble from '../TextBubble';
 
+//REACT ROUTER
+import { useHistory } from 'react-router-dom';
+
+//METHODS
+import { createOrLoadConversation } from '../../pages/Messaging/handleConversation';
+
 const useStyles = makeStyles((theme) => ({
   avatar: {
     fontSize: '50px',
@@ -73,9 +79,28 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Sidebar = ({ isOwnProfile, user }) => {
+const Sidebar = ({ isOwnProfile, user, loggedInUser }) => {
+  // request body to create conversation
+  const payload = {
+    receiverId: user._id,
+  };
   const [isModalOpen, setIsModalOpen] = useState(false);
   const classes = useStyles();
+  const history = useHistory();
+
+  const handleSendMessage = async () => {
+    // create a new conversation or load the existing conversation on sendMessage
+    const res = await createOrLoadConversation(
+      loggedInUser._id,
+      user._id,
+      payload,
+    );
+    if (res === true) {
+      history.push({ pathname: `/messages` });
+    } else {
+      console.log(res);
+    }
+  };
   return (
     <>
       <EditProfileModal
@@ -106,7 +131,9 @@ const Sidebar = ({ isOwnProfile, user }) => {
               Edit Profile
             </Button>
           ) : (
-            <Button margin>Send Message</Button>
+            <Button onClick={() => handleSendMessage()} margin>
+              Send Message
+            </Button>
           )}
           <Typography
             element="p"

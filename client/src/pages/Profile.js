@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Box, Grid, makeStyles, Typography } from '@material-ui/core';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 // COMPONENTS
 import Project from '../components/Project';
@@ -26,6 +26,10 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(2, 0),
     textAlign: 'center',
     width: '70%',
+  },
+  link: {
+    textDecoration: 'none',
+    color: 'rgba(0, 0, 0, 0.87)',
   },
   location: {
     color: '#999',
@@ -54,6 +58,11 @@ const useStyles = makeStyles((theme) => ({
   },
   projects: {
     margin: theme.spacing(8, 0),
+  },
+  project: {
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   sidebar: {
     backgroundColor: '#fff',
@@ -89,6 +98,7 @@ const Profile = () => {
     state: { user: authUser, isAuthenticated },
   } = useContext(userState);
   const { userId } = useParams();
+  const history = useHistory();
   const classes = useStyles();
   const [currentUser, setCurrentUser] = useState({ _id: null });
   const [isOwnProfile, setIsOwnProfile] = useState(false);
@@ -98,7 +108,7 @@ const Profile = () => {
 
   const getProjects = async () => {
     try {
-      const response = await fetch(`/api/projects/all/${userId}`);
+      const response = await fetch(`/api/projects/all/${userId}/`);
       const projects = await response.json();
       setProjects(projects);
     } catch (error) {
@@ -133,6 +143,13 @@ const Profile = () => {
       getUser();
     }
   };
+  const handleProjectClick = (projectId) => {
+    if (isOwnProfile) {
+      history.push(`/edit-project/${projectId}`);
+    } else {
+      history.push(`/project/${projectId}`);
+    }
+  };
 
   useEffect(() => {
     handleCurrentUser();
@@ -150,12 +167,16 @@ const Profile = () => {
   return (
     <div className={classes.container}>
       {isLoading ? (
-        <div style={{ textAlign: 'center', margin: '30px 0'}}>
+        <div style={{ textAlign: 'center', margin: '30px 0' }}>
           <Loader />
         </div>
       ) : (
         <>
-          <Sidebar isOwnProfile={isOwnProfile} user={currentUser} />
+          <Sidebar
+            isOwnProfile={isOwnProfile}
+            user={currentUser}
+            loggedInUser={authUser}
+          />
           <Box className={classes.main}>
             <Typography
               element="h1"
@@ -167,7 +188,15 @@ const Profile = () => {
             <Grid container spacing={3} className={classes.projects}>
               {projects.length > 0 ? (
                 projects.map((project) => (
-                  <Project key={project._id} data={project} gridSize={6} />
+                  <Grid
+                    key={project._id}
+                    item
+                    xs={4}
+                    className={classes.project}
+                    onClick={() => handleProjectClick(project._id)}
+                  >
+                    <Project data={project} />
+                  </Grid>
                 ))
               ) : (
                 <Typography variant="subtitle1" style={{ fontSize: '18px' }}>
