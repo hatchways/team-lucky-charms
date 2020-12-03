@@ -5,6 +5,7 @@ import { useHistory, useParams } from 'react-router-dom';
 // COMPONENTS
 import Project from '../components/Project';
 import Sidebar from '../components/Profile/Sidebar';
+import Loader from '../components/Loader';
 
 // CONTEXT
 import { userState } from '../provider/UserContext';
@@ -166,8 +167,9 @@ const Profile = () => {
   return (
     <div className={classes.container}>
       {isLoading ? (
-        // TODO: Create nicer looking loading (placeholders, etc.)
-        <h1>Loading...</h1>
+        <div style={{ textAlign: 'center', margin: '30px 0' }}>
+          <Loader />
+        </div>
       ) : (
         <>
           <Sidebar
@@ -197,7 +199,9 @@ const Profile = () => {
                   </Grid>
                 ))
               ) : (
-                <h1>No projects created yet</h1>
+                <Typography variant="subtitle1" style={{ fontSize: '18px' }}>
+                  No projects created yet
+                </Typography>
               )}
             </Grid>
           </Box>
