@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import IndividualProject from '../components/IndividualProject';
+import Loader from '../components/Loader';
 
 const Project = () => {
   const [project, setProject] = useState();
@@ -33,7 +34,9 @@ const Project = () => {
   return (
     <div>
       {loading ? (
-        <h1>Loading project details...</h1>
+        <div style={{ textAlign: 'center', margin: '30px 0' }}>
+          <Loader size={60} />
+        </div>
       ) : (
         <IndividualProject project={project} />
       )}
