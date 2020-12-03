@@ -4,6 +4,8 @@ import { Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
+import './App.css';
+
 // THEME
 import { theme } from './themes/theme';
 
@@ -13,6 +15,7 @@ import Launch from './pages/Launch';
 import Profile from './pages/Profile';
 import SignUp from './pages/SignUp';
 import Login from './pages/Login';
+import Messages from './pages/Messaging/Messages';
 import ProjectDetails from './pages/ProjectDetails';
 import EditProject from './pages/EditProject';
 
@@ -72,8 +75,9 @@ function App() {
               <Route path="/signup" exact component={SignUp} />
               <Route path="/users/:userId" component={Profile} />
               <Route path="/project/:projectId" component={ProjectDetails} />
-              <Route path="/edit-project/:projectId" component={EditProject} />
-              <ProtectedRoutes path="/launch" exact component={Launch} />
+              <Route path="/edit-project/:projectId" component={EditProject} 
+              <ProtectedRoutes path="/messages" component={Messages} />
+              <ProtectedRoutes exact path="/launch" component={Launch} />
               {/* need suggestion for this route name be payments or funds */}
               <ProtectedRoutes
                 path="/payments"

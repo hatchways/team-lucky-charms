@@ -107,7 +107,7 @@ const Profile = () => {
 
   const getProjects = async () => {
     try {
-      const response = await fetch(`/api/projects/all/${userId}`);
+      const response = await fetch(`/api/projects/all/${userId}/`);
       const projects = await response.json();
       setProjects(projects);
     } catch (error) {
@@ -142,7 +142,6 @@ const Profile = () => {
       getUser();
     }
   };
-
   const handleProjectClick = (projectId) => {
     if (isOwnProfile) {
       history.push(`/edit-project/${projectId}`);
@@ -171,7 +170,11 @@ const Profile = () => {
         <h1>Loading...</h1>
       ) : (
         <>
-          <Sidebar isOwnProfile={isOwnProfile} user={currentUser} />
+          <Sidebar
+            isOwnProfile={isOwnProfile}
+            user={currentUser}
+            loggedInUser={authUser}
+          />
           <Box className={classes.main}>
             <Typography
               element="h1"

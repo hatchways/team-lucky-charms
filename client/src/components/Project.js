@@ -41,8 +41,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: '600',
   },
 }));
-
-const Project = ({ data }) => {
+const Project = ({ data, gridSize }) => {
   const format = d3Format(',');
   const classes = useStyles();
   const { fundingGoal, images, industry, title, investors } = data;

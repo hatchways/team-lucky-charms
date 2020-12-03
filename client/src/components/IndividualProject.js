@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   makeStyles,
   Grid,
@@ -16,9 +16,18 @@ import CountUp from 'react-countup';
 import Button from '../components/Button';
 import TextBubble from './TextBubble';
 
+//methods
+import { createOrLoadConversation } from '../pages/Messaging/handleConversation';
+
 //assets
 import avatar from '../assets/images/user.png';
 import FundingPayment from './Funding/Payments';
+
+//context
+import { userState } from '../provider/UserContext';
+
+//react router
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -121,6 +130,25 @@ const IndividualProject = ({ project }) => {
   } = project;
 
   const classes = useStyles();
+  const {
+    state: { user },
+  } = useContext(userState);
+
+  const history = useHistory();
+  const payload = {
+    receiverId: owner._id,
+  };
+
+  const handleSendMessage = async () => {
+    // create a new conversation or load the existing conversation
+    const res = await createOrLoadConversation(user._id, owner, payload);
+    if (res === true) {
+      history.push({ pathname: `/messages`, state: { owner } });
+    } else {
+      console.log(res);
+    }
+  };
+
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -230,7 +258,11 @@ const IndividualProject = ({ project }) => {
                 {location}
               </Typography>
               <Box className={classes.buttons}>
-                <Button outlined className={classes.button}>
+                <Button
+                  outlined
+                  className={classes.button}
+                  onClick={() => handleSendMessage()}
+                >
                   Send Message
                 </Button>
                 <Button className={classes.button} onClick={handleClickOpen}>
