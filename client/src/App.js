@@ -75,7 +75,7 @@ function App() {
               <Route path="/signup" exact component={SignUp} />
               <Route path="/users/:userId" component={Profile} />
               <Route path="/project/:projectId" component={ProjectDetails} />
-              <Route path="/edit-project/:projectId" component={EditProject} 
+              <Route path="/edit-project/:projectId" component={EditProject} />
               <ProtectedRoutes path="/messages" component={Messages} />
               <ProtectedRoutes exact path="/launch" component={Launch} />
               {/* need suggestion for this route name be payments or funds */}
