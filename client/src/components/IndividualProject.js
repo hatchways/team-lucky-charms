@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import Carousel from 'react-material-ui-carousel';
 import CountUp from 'react-countup';
+import { format as d3format } from 'd3-format';
 
 //components
 import Button from '../components/Button';
@@ -128,6 +129,7 @@ const IndividualProject = ({ project }) => {
     owner,
     _id,
   } = project;
+  const format = d3format(',');
 
   const classes = useStyles();
   const {
@@ -182,6 +184,7 @@ const IndividualProject = ({ project }) => {
             <Carousel>
               {images.map((image) => (
                 <img
+                  key={image}
                   src={image}
                   alt="Project-thumbnail"
                   className={classes.media}
@@ -219,7 +222,7 @@ const IndividualProject = ({ project }) => {
                 )}
               </Typography>
               <Typography variant="subtitle2" className={classes.numbers}>
-                / {fundingGoal}
+                / {format(fundingGoal)}
               </Typography>
             </Box>
             <Divider />
