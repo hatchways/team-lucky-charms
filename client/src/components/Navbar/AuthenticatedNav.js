@@ -163,7 +163,7 @@ const AuthenticatedNav = () => {
         >
           Profile
         </MenuItem>
-        <MenuItem component={NavLink} to={`/messages`} onClick={handleClose}>
+        <MenuItem component={NavLink} to={`/messages`} onClick={handleProfileClose}>
           Messages
         </MenuItem>
         <MenuItem onClick={logout}>Logout</MenuItem>
