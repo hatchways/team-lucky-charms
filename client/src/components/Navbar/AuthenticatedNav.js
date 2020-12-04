@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme) => ({
       background: 'transparent',
     },
   },
+  menuItem: {
+    color: '#000',
+  },
 }));
 
 const AuthenticatedNav = () => {
@@ -65,7 +68,7 @@ const AuthenticatedNav = () => {
 
   const markReadSuccess = () => {
     setBadge(0);
-  }
+  };
 
   const handleNotificationsClose = () => {
     if (notifications.length !== 0) {
@@ -115,7 +118,7 @@ const AuthenticatedNav = () => {
     getNotifications();
     // using sockets to get live notification updates
     getNewNotifications(updateNotifications);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -160,13 +163,21 @@ const AuthenticatedNav = () => {
           component={NavLink}
           to={`/users/${user._id}`}
           onClick={handleProfileClose}
+          className={classes.menuItem}
         >
           Profile
         </MenuItem>
-        <MenuItem component={NavLink} to={`/messages`} onClick={handleProfileClose}>
+        <MenuItem
+          className={classes.menuItem}
+          component={NavLink}
+          to={`/messages`}
+          onClick={handleProfileClose}
+        >
           Messages
         </MenuItem>
-        <MenuItem onClick={logout}>Logout</MenuItem>
+        <MenuItem className={classes.menuItem} onClick={logout}>
+          Logout
+        </MenuItem>
       </Menu>
     </div>
   );

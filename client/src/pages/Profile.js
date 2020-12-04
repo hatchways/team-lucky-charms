@@ -167,8 +167,8 @@ const Profile = () => {
   return (
     <div className={classes.container}>
       {isLoading ? (
-        <div style={{ textAlign: 'center', margin: '30px 0' }}>
-          <Loader />
+        <div style={{ textAlign: 'center', margin: '50px auto' }}>
+          <Loader size={60} />
         </div>
       ) : (
         <>

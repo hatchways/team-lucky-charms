@@ -33,6 +33,11 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 10,
     marginRight: 10,
   },
+  siteName: {
+    fontSize: '18px',
+    color: '#000',
+    fontWeight: 500,
+  },
   toolbar: {
     display: 'flex',
     zIndex: 10,
@@ -52,7 +57,7 @@ const Navbar = () => {
         <Toolbar className={classes.toolbar}>
           <Grid component={NavLink} to="/" className={classes.title}>
             <img className={classes.logo} src={logo} alt="logo" />
-            <Typography variant="h6">Product Launch</Typography>
+            <Typography className={classes.siteName}>Product Launch</Typography>
           </Grid>
 
           {isAuthenticated ? (

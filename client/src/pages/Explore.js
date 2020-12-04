@@ -11,7 +11,6 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import LocationCityIcon from '@material-ui/icons/LocationCity';
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 
 import useDebouncer from './../utils/hooks';
 import Project from '../components/Project';
@@ -30,6 +29,11 @@ const useStyles = makeStyles((theme) => ({
   },
   filter: {
     paddingTop: 50,
+  },
+  project: {
+    '&:hover': {
+      cursor: 'pointer',
+    }
   },
   projects: {
     margin: theme.spacing(8, 0),
@@ -157,9 +161,15 @@ const Explore = () => {
       <Grid container spacing={3} className={classes.projects}>
         {projects.length > 0 ? (
           projects.map((project) => (
-            <span onClick={() => handleProjectClick(project.id)}>
-              <Project key={project._id} data={project} gridSize={4} />
-            </span>
+            <Grid
+              key={project._id}
+              item
+              xs={4}
+              className={classes.project}
+              onClick={() => handleProjectClick(project._id)}
+            >
+              <Project data={project} />
+            </Grid>
           ))
         ) : (
           <Typography>No Projects to show</Typography>
