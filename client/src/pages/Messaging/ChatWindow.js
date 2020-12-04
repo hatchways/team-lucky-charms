@@ -87,7 +87,9 @@ const ChatWindow = ({ chat, submitMessage, currentUser }) => {
   return (
     <Paper className={classes.chatPane}>
       <Box className={classes.chattingWithInfo}>
-        <Avatar src={chat.avatar} className={classes.avatar} />
+        <Avatar src={chat.avatar} className={classes.avatar}>
+          {chat.name[0]}
+        </Avatar>
         <Box>
           <Typography variant="caption">{chat.name}</Typography>
           <Typography variant="h6">{chat.location}</Typography>
