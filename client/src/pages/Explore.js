@@ -30,6 +30,11 @@ const useStyles = makeStyles((theme) => ({
   filter: {
     paddingTop: 50,
   },
+  project: {
+    '&:hover': {
+      cursor: 'pointer',
+    }
+  },
   projects: {
     margin: theme.spacing(8, 0),
   },

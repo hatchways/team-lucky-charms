@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     margin: theme.spacing(1, 2),
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   date: {
     marginLeft: 'auto',
@@ -31,7 +34,9 @@ const ChatCard = ({ receiverName, avatar, createdAt, latestMessage }) => {
   return (
     <>
       <Paper className={classes.card} elevation={4}>
-        <Avatar src={avatar} className={classes.avatar} />
+        <Avatar src={avatar} className={classes.avatar}>
+          {receiverName[0]}
+        </Avatar>
         <Box>
           <Typography variant="caption">{receiverName}</Typography>
           <Typography variant="h6">
