@@ -12,6 +12,7 @@ import {
 import Carousel from 'react-material-ui-carousel';
 import CountUp from 'react-countup';
 import { format as d3format } from 'd3-format';
+import dayjs from 'dayjs';
 
 //components
 import Button from '../components/Button';
@@ -29,6 +30,9 @@ import { userState } from '../provider/UserContext';
 
 //react router
 import { useHistory } from 'react-router-dom';
+
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -56,6 +60,9 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: '500',
     margin: theme.spacing(2, 2),
     padding: theme.spacing(2, 2),
+  },
+  deadline: {
+    fontSize: '22px'
   },
   divider: {
     width: '1px',
@@ -129,6 +136,7 @@ const IndividualProject = ({ project }) => {
     title,
     subtitle,
     description,
+    deadline,
     images,
     fundingGoal,
     investors,
@@ -153,7 +161,7 @@ const IndividualProject = ({ project }) => {
     // create a new conversation or load the existing conversation
     const res = await createOrLoadConversation(user._id, owner, payload);
     if (res === true) {
-      history.push({ pathname: `/messages`, state: { owner } });
+      history.push({ pathname: `/messages` });
     } else {
       console.log(res);
     }
@@ -248,7 +256,7 @@ const IndividualProject = ({ project }) => {
               </Grid>
               <Grid item xs={5} className={classes.stats}>
                 <Typography component="h1" variant="h4">
-                  44
+                  {dayjs(deadline).diff(new Date(), 'day')}
                 </Typography>
                 <Typography variant="subtitle1">days to go</Typography>
               </Grid>
@@ -261,12 +269,12 @@ const IndividualProject = ({ project }) => {
                 alt="User"
                 src={avatar}
                 className={classes.avatar}
-                onClick={() => history.push(`/users/${owner}`)}
+                onClick={() => history.push(`/users/${owner._id}`)}
               />
               <Typography
                 element="h1"
                 className={classes.userName}
-                onClick={() => history.push(`/users/${owner}`)}
+                onClick={() => history.push(`/users/${owner._id}`)}
               >
                 {owner.name}
               </Typography>
