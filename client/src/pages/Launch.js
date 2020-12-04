@@ -155,9 +155,9 @@ const Launch = () => {
     setTitle('');
   };
 
-  const projectLaunchSuccess = () => {
+  const projectLaunchSuccess = (projectId) => {
     resetInputs();
-    history.push(`/users/${user._id}`);
+    history.push(`/project/${projectId}`);
   };
 
   const onSubmitProject = async (e) => {
@@ -190,8 +190,9 @@ const Launch = () => {
         body: JSON.stringify(payload),
         headers: { 'Content-Type': 'application/json' },
       });
+      const project = await res.json();
       if (res.status === 201) {
-        projectLaunchSuccess();
+        projectLaunchSuccess(project._id);
       }
     } catch (error) {
       console.log(error);
