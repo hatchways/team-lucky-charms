@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   makeStyles,
   Grid,
@@ -32,7 +32,12 @@ import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
+    height: '70px',
+    width: '70px',
     margin: theme.spacing(3, 3, 1, 3),
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
   button: {
     margin: theme.spacing(1, 0),
@@ -113,6 +118,9 @@ const useStyles = makeStyles((theme) => ({
   userName: {
     fontSize: '24px',
     fontWeight: '600',
+    '&:hover': {
+      cursor: 'pointer',
+    },
   },
 }));
 
@@ -129,6 +137,7 @@ const IndividualProject = ({ project }) => {
     owner,
     _id,
   } = project;
+  const [projectOwner, setProjectOwner] = useState('');
   const format = d3format(',');
 
   const classes = useStyles();
@@ -138,7 +147,7 @@ const IndividualProject = ({ project }) => {
 
   const history = useHistory();
   const payload = {
-    receiverId: owner._id,
+    receiverId: owner,
   };
 
   const handleSendMessage = async () => {
@@ -163,7 +172,20 @@ const IndividualProject = ({ project }) => {
 
   const totalFunds = investors
     .map((a) => a.amountFunded)
-    .reduce(((acc, amountFunded) => acc + amountFunded), 0);
+    .reduce((acc, amountFunded) => acc + amountFunded, 0);
+
+  useEffect(() => {
+    const getOwner = async () => {
+      const response = await fetch(`/api/users/${owner}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const user = await response.json();
+      setProjectOwner(user);
+    };
+    getOwner();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [project]);
 
   return (
     <Container className={classes.root}>
@@ -249,9 +271,18 @@ const IndividualProject = ({ project }) => {
 
             {/* User & Buttons */}
             <Box className={classes.userInfo}>
-              <Avatar alt="User" src={avatar} className={classes.avatar} />
-              <Typography element="h1" className={classes.userName}>
-                {owner.name}
+              <Avatar
+                alt="User"
+                src={avatar}
+                className={classes.avatar}
+                onClick={() => history.push(`/users/${owner}`)}
+              />
+              <Typography
+                element="h1"
+                className={classes.userName}
+                onClick={() => history.push(`/users/${owner}`)}
+              >
+                {projectOwner.name}
               </Typography>
               <Typography
                 element="h2"
