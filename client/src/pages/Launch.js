@@ -17,6 +17,8 @@ import {
 } from '@material-ui/core';
 import { useDropzone } from 'react-dropzone';
 import { useHistory } from 'react-router-dom';
+import DayJsUtils from '@date-io/dayjs'; // choose your lib
+import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 // COMPONENTS
 import Button from '../components/Button';
@@ -124,10 +126,11 @@ const Launch = () => {
   } = useContext(userState);
   const [description, setDescription] = useState('');
   const [fundingGoal, setFundingGoal] = useState('');
-  const [industry, setIndustry] = useState('consumer');
+  const [industry, setIndustry] = useState('food and beverage');
   const [location, setLocation] = useState('');
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
+  const [deadline, setDeadline] = useState(new Date());
   const [acceptedImages, setAcceptedImages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { getRootProps, getInputProps } = useDropzone({
@@ -167,6 +170,7 @@ const Launch = () => {
     const payload = {
       title,
       subtitle,
+      deadline,
       description,
       location,
       fundingGoal,
@@ -295,8 +299,13 @@ const Launch = () => {
                 value={industry}
                 variant="outlined"
               >
-                <MenuItem value={'consumer'}>Consumer</MenuItem>
-                <MenuItem value={'enterprise'}>Enterprise</MenuItem>
+                <MenuItem value={'food and beverage'}>
+                  Food and Beverage
+                </MenuItem>
+                <MenuItem value={'technology'}>Technology</MenuItem>
+                <MenuItem value={'business'}>Business</MenuItem>
+                <MenuItem value={'clothing'}>Clothing</MenuItem>
+                <MenuItem value={'accessories'}>Accessories</MenuItem>
               </TextField>
             </Box>
 
@@ -317,6 +326,23 @@ const Launch = () => {
                 value={location}
                 variant="outlined"
               ></OutlinedInput>
+            </Box>
+
+            <Box className={classes.box}>
+              <InputLabel
+                htmlFor="deadline"
+                id="deadline-label"
+                className={classes.label}
+              >
+                Deadline
+              </InputLabel>
+              <MuiPickersUtilsProvider utils={DayJsUtils}>
+                <DatePicker
+                  value={deadline}
+                  onChange={setDeadline}
+                  inputVariant="outlined"
+                />
+              </MuiPickersUtilsProvider>
             </Box>
 
             <Box className={classes.box}>
