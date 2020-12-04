@@ -3,7 +3,9 @@ const User = require('../models/User');
 
 async function getProject(req, res) {
   try {
-    const project = await Project.findOne({ _id: req.params.projectId });
+    const project = await Project.findOne({
+      _id: req.params.projectId,
+    }).populate('owner', 'name');
     if (!project) {
       return res.status(400);
     }
@@ -114,5 +116,5 @@ module.exports = {
   getAllProjects,
   getProjectsForUser,
   getProject,
-  updateProject
+  updateProject,
 };

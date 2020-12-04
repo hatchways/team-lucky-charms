@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import {
   makeStyles,
   Grid,
@@ -137,7 +137,6 @@ const IndividualProject = ({ project }) => {
     owner,
     _id,
   } = project;
-  const [projectOwner, setProjectOwner] = useState('');
   const format = d3format(',');
 
   const classes = useStyles();
@@ -147,7 +146,7 @@ const IndividualProject = ({ project }) => {
 
   const history = useHistory();
   const payload = {
-    receiverId: owner,
+    receiverId: owner._id,
   };
 
   const handleSendMessage = async () => {
@@ -173,19 +172,6 @@ const IndividualProject = ({ project }) => {
   const totalFunds = investors
     .map((a) => a.amountFunded)
     .reduce((acc, amountFunded) => acc + amountFunded, 0);
-
-  useEffect(() => {
-    const getOwner = async () => {
-      const response = await fetch(`/api/users/${owner}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const user = await response.json();
-      setProjectOwner(user);
-    };
-    getOwner();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project]);
 
   return (
     <Container className={classes.root}>
@@ -282,7 +268,7 @@ const IndividualProject = ({ project }) => {
                 className={classes.userName}
                 onClick={() => history.push(`/users/${owner}`)}
               >
-                {projectOwner.name}
+                {owner.name}
               </Typography>
               <Typography
                 element="h2"
