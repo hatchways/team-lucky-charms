@@ -2,8 +2,12 @@ import React from 'react';
 import { Box, makeStyles, Typography } from '@material-ui/core';
 import { format as d3Format } from 'd3-format';
 import CountUp from 'react-countup';
+import dayjs from 'dayjs';
 
 import TextBubble from './TextBubble';
+
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime);
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -44,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 const Project = ({ data, gridSize }) => {
   const format = d3Format(',');
   const classes = useStyles();
-  const { fundingGoal, images, industry, title, investors } = data;
+  const { fundingGoal, images, industry, title, investors, deadline } = data;
   const totalFunds = investors
     .map((a) => a.amountFunded)
     .reduce((acc, amountFunded) => acc + amountFunded, 0);
@@ -76,7 +80,7 @@ const Project = ({ data, gridSize }) => {
         <Typography element="h4" className={classes.footer}>
           Equity exchange: 10%
           <span style={{ margin: '0 16px' }}>|</span>
-          12 days to go
+          {dayjs(deadline).diff(new Date(), 'day')} days to go
         </Typography>
       </Box>
     </Box>
